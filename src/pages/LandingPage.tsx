@@ -123,47 +123,38 @@ export default function LandingPage() {
 
       {/* ── Bottom feature strip ────────────────────────────────────── */}
       <footer className="relative z-10 border-t border-dnd-border/30 bg-dnd-dark/60 backdrop-blur-sm">
-        <div className="max-w-4xl mx-auto px-8 py-6 grid grid-cols-1 sm:grid-cols-3 gap-6 text-center">
-          {[
-            { icon: <Sword className="w-5 h-5" />, title: 'Live Turn Tracker', desc: 'Control initiative from your phone, watch it update on the big screen instantly.' },
-            { icon: <Shield className="w-5 h-5" />, title: 'Visual Display Mode', desc: 'Project a cinematic battle view with creature portraits and HP bars.' },
-            { icon: <ChevronRight className="w-5 h-5" />, title: 'Encounter Presets', desc: 'Save monster groups and drop them into any encounter in seconds.' },
-          ].map(({ icon, title, desc }) => (
-            <div key={title} className="flex flex-col items-center gap-2">
-              <div style={{ color: 'var(--theme-accent)' }}>{icon}</div>
-              <p className="font-body text-dnd-parchment text-sm tracking-wider">{title}</p>
-              <p className="text-dnd-muted font-ui text-xs leading-relaxed">{desc}</p>
-            </div>
-          ))}
+        <div className="max-w-4xl mx-auto px-8 py-6">
+
+          {/* Map art credit — MOBILE: shown as block above features */}
+          <div className="sm:hidden text-center text-white/50 text-[10px] font-ui leading-relaxed mb-6 pb-5 border-b border-dnd-border/30">
+            <p className="text-white/40 font-body tracking-[0.2em] uppercase mb-2">Map Art</p>
+            <a href="https://smitchellmaps.com" target="_blank" rel="noopener noreferrer" className="block hover:text-white/80 transition-colors">smitchellmaps.com</a>
+            <a href="https://patreon.com/smitchellmaps" target="_blank" rel="noopener noreferrer" className="block hover:text-white/80 transition-colors">Patreon: @smitchellmaps</a>
+            <a href="https://instagram.com/smitchellarts" target="_blank" rel="noopener noreferrer" className="block hover:text-white/80 transition-colors">Instagram: @smitchellarts</a>
+          </div>
+
+          {/* Feature grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 text-center">
+            {[
+              { icon: <Sword className="w-5 h-5" />, title: 'Live Turn Tracker', desc: 'Control initiative from your phone, watch it update on the big screen instantly.' },
+              { icon: <Shield className="w-5 h-5" />, title: 'Visual Display Mode', desc: 'Project a cinematic battle view with creature portraits and HP bars.' },
+              { icon: <ChevronRight className="w-5 h-5" />, title: 'Encounter Presets', desc: 'Save monster groups and drop them into any encounter in seconds.' },
+            ].map(({ icon, title, desc }) => (
+              <div key={title} className="flex flex-col items-center gap-2">
+                <div style={{ color: 'var(--theme-accent)' }}>{icon}</div>
+                <p className="font-body text-dnd-parchment text-sm tracking-wider">{title}</p>
+                <p className="text-dnd-muted font-ui text-xs leading-relaxed">{desc}</p>
+              </div>
+            ))}
+          </div>
         </div>
 
-        {/* Map art credit — bottom right */}
-        <div className="absolute bottom-3 right-6 sm:right-8 text-right text-white/50 text-[10px] font-ui leading-relaxed">
+        {/* Map art credit — DESKTOP: absolute bottom right */}
+        <div className="hidden sm:block absolute bottom-3 right-6 sm:right-8 text-right text-white/50 text-[10px] font-ui leading-relaxed">
           <p className="text-white/40 font-body tracking-[0.2em] uppercase mb-1">Map Art</p>
-          <a
-            href="https://smitchellmaps.com"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="block hover:text-white/80 transition-colors"
-          >
-            smitchellmaps.com
-          </a>
-          <a
-            href="https://patreon.com/smitchellmaps"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="block hover:text-white/80 transition-colors"
-          >
-            Patreon: @smitchellmaps
-          </a>
-          <a
-            href="https://instagram.com/smitchellarts"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="block hover:text-white/80 transition-colors"
-          >
-            Instagram: @smitchellarts
-          </a>
+          <a href="https://smitchellmaps.com" target="_blank" rel="noopener noreferrer" className="block hover:text-white/80 transition-colors">smitchellmaps.com</a>
+          <a href="https://patreon.com/smitchellmaps" target="_blank" rel="noopener noreferrer" className="block hover:text-white/80 transition-colors">Patreon: @smitchellmaps</a>
+          <a href="https://instagram.com/smitchellarts" target="_blank" rel="noopener noreferrer" className="block hover:text-white/80 transition-colors">Instagram: @smitchellarts</a>
         </div>
       </footer>
     </div>

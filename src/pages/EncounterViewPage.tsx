@@ -46,7 +46,7 @@ function InitiativeRow({ creature, isActive, rank }: { creature: Creature; isAct
       className={cn(
         'flex items-center gap-3 px-4 py-3 rounded-lg border transition-all duration-300',
         isActive
-          ? 'bg-dnd-gold/10 border-dnd-gold/50 shadow-glow-gold'
+          ? 'bg-dnd-surface/30 border-dnd-gold/50 shadow-glow-gold'
           : 'bg-dnd-dark/60 border-dnd-border/40 opacity-75 hover:opacity-100',
         creature.status === 'dead' && 'grayscale opacity-30',
       )}
@@ -150,7 +150,7 @@ export default function EncounterViewPage() {
   if (isLoading || !encounter) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="text-dnd-jade font-body tracking-widest animate-pulse text-xl">
+        <div className="font-body tracking-widest animate-pulse text-xl" style={{ color: 'var(--theme-accent)' }}>
           Entering the battlefield…
         </div>
       </div>
@@ -211,10 +211,10 @@ export default function EncounterViewPage() {
               <motion.div
                 key={active.id}
                 className="absolute inset-0"
-                initial={{ opacity: 0 }}
+                initial={{ opacity: 1 }}
                 animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.5 }}
+                exit={{ opacity: 1 }}
+                transition={{ duration: 0 }}
               >
                 {/* Creature image — fills full column top-to-bottom */}
                 {active.initiativeImageUrl ? (
@@ -235,23 +235,29 @@ export default function EncounterViewPage() {
                   </div>
                 )}
 
-                {/* Left jade accent bar */}
-                <div className="absolute left-0 top-0 bottom-0 w-1 bg-dnd-jade shadow-glow-jade" />
+                {/* Left accent bar — theme color */}
+                <div
+                  className="absolute left-0 top-0 bottom-0 w-1"
+                  style={{ backgroundColor: 'var(--theme-accent)', boxShadow: '0 0 24px rgba(var(--theme-accent-rgb), 0.5)' }}
+                />
 
                 {/* Bottom overlay: name, stats, status */}
                 <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/95 via-black/70 to-transparent pt-32 pb-6 px-6">
                   {/* Active badge */}
                   <div className="flex items-center gap-2 mb-3">
-                    <div className="w-2 h-2 rounded-full bg-dnd-jade animate-pulse" />
-                    <span className="text-dnd-jade font-body text-[10px] tracking-[0.35em] uppercase">Active Turn</span>
-                    <div className="w-2 h-2 rounded-full bg-dnd-jade animate-pulse" />
+                    <div className="w-2 h-2 rounded-full animate-pulse" style={{ backgroundColor: 'var(--theme-accent)' }} />
+                    <span className="font-body text-[10px] tracking-[0.35em] uppercase" style={{ color: 'var(--theme-accent)' }}>Active Turn</span>
+                    <div className="w-2 h-2 rounded-full animate-pulse" style={{ backgroundColor: 'var(--theme-accent)' }} />
                   </div>
 
                   <h2 className="font-display text-dnd-parchment text-3xl leading-tight" style={{ textShadow: '0 2px 16px rgba(0,0,0,0.9)' }}>
                     {active.name}
                   </h2>
                   {active.isPlayer && (
-                    <span className="text-dnd-jade text-xs font-body tracking-widest">PLAYER CHARACTER</span>
+                    <span
+                      className="text-xs font-body tracking-widest"
+                      style={{ color: 'var(--theme-accent)' }}
+                    >PLAYER CHARACTER</span>
                   )}
 
                   {/* Stats */}
@@ -304,7 +310,10 @@ export default function EncounterViewPage() {
         <div className="flex-1 flex flex-col bg-black/30 backdrop-blur-sm">
           {/* Header */}
           <div className="px-5 py-4 border-b border-dnd-border/30 flex items-center gap-2">
-            <span className="font-body text-dnd-jade text-xs tracking-[0.3em] uppercase">Initiative Order</span>
+            <span
+              className="font-body text-xs tracking-[0.3em] uppercase"
+              style={{ color: 'var(--theme-accent)' }}
+            >Initiative Order</span>
             <span className="ml-auto text-xs text-dnd-muted font-ui">
               {sorted.filter(c => c.status !== 'dead').length} active
             </span>

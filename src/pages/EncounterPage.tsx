@@ -144,28 +144,33 @@ export default function EncounterPage() {
       )}
 
       <div className="relative z-10 space-y-6">
-        {/* Header */}
-        <div className="flex items-start gap-4 flex-wrap">
-          <button onClick={() => navigate('/')} className="dnd-button-ghost flex items-center gap-1">
-            <ChevronLeft className="w-4 h-4" />Back
-          </button>
-          <div className="flex-1 min-w-0">
+        {/* Header: buttons row + title below (mobile) / all inline (sm+) */}
+        <div className="space-y-2">
+          {/* Always-visible top row: Back on left, Edit + Visual View on right */}
+          <div className="flex items-center gap-2">
+            <button onClick={() => navigate('/')} className="dnd-button-ghost flex items-center gap-1 py-2 px-3">
+              <ChevronLeft className="w-4 h-4" />Back
+            </button>
+            <div className="flex-1" />
+            <div className="flex gap-2">
+              <button onClick={() => setEditModal(true)} className="dnd-button-secondary py-2 px-4 text-sm flex items-center gap-1.5">
+                Edit
+              </button>
+              <button
+                onClick={openVisualView}
+                disabled={encounter.creatures.length === 0}
+                className="dnd-button-primary py-2 px-4 text-sm flex items-center gap-1.5"
+              >
+                <ExternalLink className="w-4 h-4" /> Visual View
+              </button>
+            </div>
+          </div>
+          {/* Title — always on its own line */}
+          <div className="min-w-0">
             <h1 className="font-display text-3xl text-dnd-gold truncate">{encounter.title}</h1>
             {encounter.description && (
               <p className="text-dnd-muted font-ui italic mt-1">{encounter.description}</p>
             )}
-          </div>
-          <div className="flex gap-2 flex-shrink-0">
-            <button onClick={() => setEditModal(true)} className="dnd-button-secondary py-2 px-4 text-sm flex items-center gap-1.5">
-              Edit
-            </button>
-            <button
-              onClick={openVisualView}
-              disabled={encounter.creatures.length === 0}
-              className="dnd-button-primary py-2 px-4 text-sm flex items-center gap-1.5"
-            >
-              <ExternalLink className="w-4 h-4" /> Visual View
-            </button>
           </div>
         </div>
 

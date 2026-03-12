@@ -65,8 +65,15 @@ export default function LoginPage() {
     }
   })
 
+  const TEAL = {
+    '--theme-primary':     '#0D9488',
+    '--theme-primary-rgb': '13, 148, 136',
+    '--theme-accent':      '#2DD4BF',
+    '--theme-accent-rgb':  '45, 212, 191',
+  } as React.CSSProperties
+
   return (
-    <div className="min-h-screen bg-adventure flex items-center justify-center p-4">
+    <div className="min-h-screen bg-adventure flex items-center justify-center p-4" style={TEAL}>
       {/* Atmospheric background glows */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-64 bg-dnd-amber/5 rounded-full blur-3xl" />
@@ -102,9 +109,10 @@ export default function LoginPage() {
               onClick={() => setMode('login')}
               className={`flex-1 pb-3 font-body text-sm tracking-widest uppercase transition-colors ${
                 mode === 'login'
-                  ? 'text-dnd-gold border-b-2 border-dnd-gold -mb-px'
+                  ? '-mb-px'
                   : 'text-dnd-muted hover:text-dnd-parchment'
               }`}
+              style={mode === 'login' ? { color: 'var(--theme-accent)', borderBottom: '2px solid var(--theme-accent)' } : {}}
             >
               Sign In
             </button>
@@ -112,9 +120,10 @@ export default function LoginPage() {
               onClick={() => setMode('register')}
               className={`flex-1 pb-3 font-body text-sm tracking-widest uppercase transition-colors ${
                 mode === 'register'
-                  ? 'text-dnd-gold border-b-2 border-dnd-gold -mb-px'
+                  ? '-mb-px'
                   : 'text-dnd-muted hover:text-dnd-parchment'
               }`}
+              style={mode === 'register' ? { color: 'var(--theme-accent)', borderBottom: '2px solid var(--theme-accent)' } : {}}
             >
               Create Account
             </button>
