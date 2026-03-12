@@ -1,4 +1,4 @@
-﻿import {
+import {
   app,
   type HttpRequest,
   type HttpResponseInit,
@@ -10,7 +10,7 @@ import { authenticate } from '../lib/auth'
 import { broadcastEncounter } from '../lib/pubsub'
 import type { Creature, Encounter } from '../types'
 
-// â”€â”€â”€ Helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Helpers ──────────────────────────────────────────────────────────────────
 function json(body: unknown, status = 200): HttpResponseInit {
   return { status, jsonBody: body }
 }
@@ -52,7 +52,7 @@ function advanceTurn(enc: Encounter, direction: 'next' | 'prev'): Pick<Encounter
   }
 }
 
-// â”€â”€â”€ GET /api/encounters â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── GET /api/encounters ──────────────────────────────────────────────────────
 async function listEncounters(req: HttpRequest, _ctx: InvocationContext): Promise<HttpResponseInit> {
   try {
     const { userId } = authenticate(req)
@@ -69,7 +69,7 @@ async function listEncounters(req: HttpRequest, _ctx: InvocationContext): Promis
   }
 }
 
-// â”€â”€â”€ POST /api/encounters â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── POST /api/encounters ─────────────────────────────────────────────────────
 async function createEncounter(req: HttpRequest, _ctx: InvocationContext): Promise<HttpResponseInit> {
   try {
     const { userId } = authenticate(req)
@@ -114,7 +114,7 @@ async function createEncounter(req: HttpRequest, _ctx: InvocationContext): Promi
   }
 }
 
-// â”€â”€â”€ POST /api/encounters/from-preset/{presetId} â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── POST /api/encounters/from-preset/{presetId} ──────────────────────────────
 async function createFromPreset(req: HttpRequest, ctx: InvocationContext): Promise<HttpResponseInit> {
   try {
     const { userId } = authenticate(req)
@@ -161,7 +161,7 @@ async function createFromPreset(req: HttpRequest, ctx: InvocationContext): Promi
   }
 }
 
-// â”€â”€â”€ GET /api/encounters/{id} â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── GET /api/encounters/{id} ─────────────────────────────────────────────────
 async function getEncounter(req: HttpRequest, _ctx: InvocationContext): Promise<HttpResponseInit> {
   try {
     const { userId } = authenticate(req)
@@ -175,7 +175,7 @@ async function getEncounter(req: HttpRequest, _ctx: InvocationContext): Promise<
   }
 }
 
-// â”€â”€â”€ PUT /api/encounters/{id} â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── PUT /api/encounters/{id} ─────────────────────────────────────────────────
 async function updateEncounter(req: HttpRequest, _ctx: InvocationContext): Promise<HttpResponseInit> {
   try {
     const { userId } = authenticate(req)
@@ -194,14 +194,14 @@ async function updateEncounter(req: HttpRequest, _ctx: InvocationContext): Promi
       updatedAt:          new Date().toISOString(),
     }
     await container.item(id, userId).replace(updated)
-    void broadcastEncounter(id, updated)
+    await broadcastEncounter(id, updated).catch(() => {})
     return json(updated)
   } catch (e: unknown) {
     return err((e instanceof Error ? e.message : 'Error'), (e as { status?: number }).status ?? 500)
   }
 }
 
-// â”€â”€â”€ DELETE /api/encounters/{id} â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── DELETE /api/encounters/{id} ──────────────────────────────────────────────
 async function deleteEncounter(req: HttpRequest, _ctx: InvocationContext): Promise<HttpResponseInit> {
   try {
     const { userId } = authenticate(req)
@@ -216,7 +216,7 @@ async function deleteEncounter(req: HttpRequest, _ctx: InvocationContext): Promi
   }
 }
 
-// â”€â”€â”€ POST /api/encounters/{id}/creatures â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── POST /api/encounters/{id}/creatures ─────────────────────────────────────
 async function addCreature(req: HttpRequest, _ctx: InvocationContext): Promise<HttpResponseInit> {
   try {
     const { userId } = authenticate(req)
@@ -247,14 +247,14 @@ async function addCreature(req: HttpRequest, _ctx: InvocationContext): Promise<H
       updatedAt: new Date().toISOString(),
     }
     await container.item(id, userId).replace(updated)
-    void broadcastEncounter(id, updated)
+    await broadcastEncounter(id, updated).catch(() => {})
     return json(updated)
   } catch (e: unknown) {
     return err((e instanceof Error ? e.message : 'Error'), (e as { status?: number }).status ?? 500)
   }
 }
 
-// â”€â”€â”€ PUT /api/encounters/{id}/creatures/{creatureId} â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── PUT /api/encounters/{id}/creatures/{creatureId} ─────────────────────────
 async function updateCreature(req: HttpRequest, _ctx: InvocationContext): Promise<HttpResponseInit> {
   try {
     const { userId }   = authenticate(req)
@@ -276,14 +276,14 @@ async function updateCreature(req: HttpRequest, _ctx: InvocationContext): Promis
       updatedAt: new Date().toISOString(),
     }
     await container.item(id, userId).replace(updated)
-    void broadcastEncounter(id, updated)
+    await broadcastEncounter(id, updated).catch(() => {})
     return json(updated)
   } catch (e: unknown) {
     return err((e instanceof Error ? e.message : 'Error'), (e as { status?: number }).status ?? 500)
   }
 }
 
-// â”€â”€â”€ DELETE /api/encounters/{id}/creatures/{creatureId} â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── DELETE /api/encounters/{id}/creatures/{creatureId} ──────────────────────
 async function deleteCreature(req: HttpRequest, _ctx: InvocationContext): Promise<HttpResponseInit> {
   try {
     const { userId }  = authenticate(req)
@@ -311,14 +311,14 @@ async function deleteCreature(req: HttpRequest, _ctx: InvocationContext): Promis
       updatedAt: new Date().toISOString(),
     }
     await container.item(id, userId).replace(updated)
-    void broadcastEncounter(id, updated)
+    await broadcastEncounter(id, updated).catch(() => {})
     return json(updated)
   } catch (e: unknown) {
     return err((e instanceof Error ? e.message : 'Error'), (e as { status?: number }).status ?? 500)
   }
 }
 
-// â”€â”€â”€ PUT /api/encounters/{id}/turn/next â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── PUT /api/encounters/{id}/turn/next ──────────────────────────────────────
 async function nextTurn(req: HttpRequest, _ctx: InvocationContext): Promise<HttpResponseInit> {
   try {
     const { userId } = authenticate(req)
@@ -330,14 +330,14 @@ async function nextTurn(req: HttpRequest, _ctx: InvocationContext): Promise<Http
     const turn = advanceTurn(enc, 'next')
     const updated = { ...enc, ...turn, updatedAt: new Date().toISOString() }
     await container.item(id, userId).replace(updated)
-    void broadcastEncounter(id, updated)
+    await broadcastEncounter(id, updated).catch(() => {})
     return json({ currentTurn: updated.currentTurn, currentRound: updated.currentRound, creatures: updated.creatures })
   } catch (e: unknown) {
     return err((e instanceof Error ? e.message : 'Error'), (e as { status?: number }).status ?? 500)
   }
 }
 
-// â”€â”€â”€ PUT /api/encounters/{id}/turn/prev â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── PUT /api/encounters/{id}/turn/prev ──────────────────────────────────────
 async function prevTurn(req: HttpRequest, _ctx: InvocationContext): Promise<HttpResponseInit> {
   try {
     const { userId } = authenticate(req)
@@ -349,14 +349,14 @@ async function prevTurn(req: HttpRequest, _ctx: InvocationContext): Promise<Http
     const turn = advanceTurn(enc, 'prev')
     const updated = { ...enc, ...turn, updatedAt: new Date().toISOString() }
     await container.item(id, userId).replace(updated)
-    void broadcastEncounter(id, updated)
+    await broadcastEncounter(id, updated).catch(() => {})
     return json({ currentTurn: updated.currentTurn, currentRound: updated.currentRound, creatures: updated.creatures })
   } catch (e: unknown) {
     return err((e instanceof Error ? e.message : 'Error'), (e as { status?: number }).status ?? 500)
   }
 }
 
-// â”€â”€â”€ Register functions â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Register functions ───────────────────────────────────────────────────────
 app.http('enc-list',           { methods: ['GET'],    route: 'encounters',                                    authLevel: 'anonymous', handler: listEncounters })
 app.http('enc-create',         { methods: ['POST'],   route: 'encounters',                                    authLevel: 'anonymous', handler: createEncounter })
 app.http('enc-from-preset',    { methods: ['POST'],   route: 'encounters/from-preset/{presetId}',             authLevel: 'anonymous', handler: createFromPreset })
