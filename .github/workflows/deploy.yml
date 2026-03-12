@@ -1,0 +1,58 @@
+name: Build, Test & Deploy
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build-test-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # ── Frontend ──────────────────────────────────────────────────────────
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install frontend deps
+        run: npm ci
+
+      - name: Run frontend tests
+        run: npm test
+
+      - name: Build frontend
+        run: npm run build
+
+      # ── API ───────────────────────────────────────────────────────────────
+      - name: Install API deps
+        working-directory: api
+        run: npm ci
+
+      - name: Run API tests
+        working-directory: api
+        run: npm test
+
+      - name: Build API
+        working-directory: api
+        run: npm run build
+
+      # ── Deploy (main branch only) ─────────────────────────────────────────
+      - name: Deploy to Azure Static Web Apps
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        uses: Azure/static-web-apps-deploy@v1
+        with:
+          azure_static_web_apps_api_token: ${{ secrets.SWA_DEPLOY_TOKEN }}
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          action: upload
+          app_location: /
+          api_location: api
+          output_location: dist
+          api_language: node
+          api_version: '20'

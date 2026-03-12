@@ -1,0 +1,41 @@
+# Dependencies
+node_modules/
+
+# Build outputs
+dist/
+build/
+.output/
+api/dist/
+
+# Environment / secrets
+api/local.settings.json
+.env
+.env.local
+.env.*.local
+*.key
+*.pem
+secrets.txt
+
+# OneDrive backup artifacts (never commit these)
+*-David-Dell.*
+*-David-Dell/
+
+# Azure Developer CLI
+.azure/
+
+# Logs
+*.log
+npm-debug.log*
+
+# Editor
+.vscode/settings.json
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Compiled JS in source tree (TypeScript source only)
+src/**/*.js
