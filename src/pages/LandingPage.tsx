@@ -39,8 +39,16 @@ export default function LandingPage() {
           </div>
         </div>
 
-        {/* Auth buttons */}
-        <div className="flex items-center gap-3">
+        {/* Auth buttons — always teal, never affected by theme picker */}
+        <div
+          className="flex items-center gap-3"
+          style={{
+            '--theme-primary':     '#0D9488',
+            '--theme-primary-rgb': '13, 148, 136',
+            '--theme-accent':      '#2DD4BF',
+            '--theme-accent-rgb':  '45, 212, 191',
+          } as React.CSSProperties}
+        >
           <button
             onClick={() => navigate('/login')}
             className="dnd-button-ghost text-sm py-2 px-5"
@@ -83,8 +91,16 @@ export default function LandingPage() {
           Share the chaos — in real time, across any device.
         </p>
 
-        {/* CTA */}
-        <div className="flex items-center gap-4 mt-2">
+        {/* CTA — always teal */}
+        <div
+          className="flex items-center gap-4 mt-2"
+          style={{
+            '--theme-primary':     '#0D9488',
+            '--theme-primary-rgb': '13, 148, 136',
+            '--theme-accent':      '#2DD4BF',
+            '--theme-accent-rgb':  '45, 212, 191',
+          } as React.CSSProperties}
+        >
           <button
             onClick={() => navigate('/login', { state: { mode: 'register' } })}
             className="dnd-button-primary flex items-center gap-2 text-base py-3 px-8 shadow-glow-teal"

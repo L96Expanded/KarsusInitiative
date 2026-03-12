@@ -18,7 +18,7 @@
   "globalHeaders": {
     "X-Content-Type-Options": "nosniff",
     "X-Frame-Options": "DENY",
-    "Content-Security-Policy": "default-src 'self'; img-src 'self' data: https://*.blob.core.windows.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; script-src 'self'",
+    "Content-Security-Policy": "default-src 'self'; img-src 'self' data: https://*.blob.core.windows.net https://storage.ko-fi.com https://ko-fi.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; script-src 'self' https://storage.ko-fi.com; frame-src https://ko-fi.com; connect-src 'self' https://ko-fi.com https://storage.ko-fi.com https://*.azure.com https://*.windows.net",
     "Strict-Transport-Security": "max-age=31536000; includeSubDomains"
   },
   "mimeTypes": {

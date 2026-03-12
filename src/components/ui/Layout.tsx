@@ -95,7 +95,8 @@ export default function Layout({ children, title }: LayoutProps) {
           <div className="relative" ref={menuRef}>
             <button
               onClick={() => setMenuOpen((v) => !v)}
-              className="flex items-center gap-2 text-dnd-muted hover:text-dnd-parchment text-sm font-ui transition-colors px-2 py-1.5 rounded-lg hover:bg-dnd-surface/60"
+              className="flex items-center gap-2 text-sm font-ui transition-colors px-2 py-1.5 rounded-lg hover:bg-dnd-surface/60"
+              style={{ color: 'var(--theme-accent)' }}
             >
               <User className="w-3.5 h-3.5" />
               <span className="hidden sm:block text-xs tracking-widest">{user?.username}</span>
