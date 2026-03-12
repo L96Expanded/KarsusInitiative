@@ -69,4 +69,5 @@ output accountName string = cosmosAccount.name
 output accountId   string = cosmosAccount.id
 
 @description('Primary read-write connection string (sensitive)')
+@secure()
 output connectionString string = cosmosAccount.listConnectionStrings().connectionStrings[0].connectionString

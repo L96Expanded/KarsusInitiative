@@ -42,4 +42,5 @@ output accountName string = storageAccount.name
 output accountId   string = storageAccount.id
 
 @description('Primary blob storage connection string (sensitive)')
+@secure()
 output connectionString string = 'DefaultEndpointsProtocol=https;AccountName=${storageAccount.name};AccountKey=${storageAccount.listKeys().keys[0].value};EndpointSuffix=${environment().suffixes.storage}'
