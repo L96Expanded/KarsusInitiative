@@ -20,27 +20,27 @@ export default function Layout({ children, title }: LayoutProps) {
   }
 
   return (
-    <div className="min-h-screen bg-adventure bg-dragon-scale flex flex-col">
+    <div className="min-h-screen flex flex-col">
       {/* Navbar */}
-      <header className="sticky top-0 z-40 bg-dnd-black/80 backdrop-blur-md border-b border-dnd-border/60">
+      <header className="sticky top-0 z-40 bg-dnd-dark/80 backdrop-blur-md border-b border-dnd-border/50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
           {/* Logo */}
           <button
             onClick={() => navigate('/')}
             className="flex items-center gap-2.5 group"
           >
-            <div className="w-8 h-8 rounded-sm bg-dnd-gold/10 border border-dnd-gold/40 flex items-center justify-center group-hover:bg-dnd-gold/20 group-hover:border-dnd-gold transition-all">
-              <Shield className="w-4 h-4 text-dnd-gold" />
+            <div className="w-8 h-8 rounded-sm bg-dnd-teal/15 border border-dnd-jade/40 flex items-center justify-center group-hover:bg-dnd-teal/25 group-hover:border-dnd-jade transition-all">
+              <Shield className="w-4 h-4 text-dnd-jade" />
             </div>
             <div className="leading-tight">
-              <span className="font-display text-dnd-gold text-sm tracking-widest">KARSUS</span>
+              <span className="font-display text-dnd-jade text-sm tracking-widest">KARSUS</span>
               <span className="block font-body text-dnd-muted text-[10px] tracking-[0.25em]">INITIATIVE</span>
             </div>
           </button>
 
           {/* Page title */}
           {title && (
-            <h1 className="hidden sm:block font-body text-dnd-amber/70 text-xs tracking-[0.3em] uppercase">
+            <h1 className="hidden sm:block font-body text-dnd-jade/60 text-xs tracking-[0.3em] uppercase">
               {title}
             </h1>
           )}

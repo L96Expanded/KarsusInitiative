@@ -149,8 +149,8 @@ export default function EncounterViewPage() {
 
   if (isLoading || !encounter) {
     return (
-      <div className="min-h-screen bg-adventure bg-dragon-scale flex items-center justify-center">
-        <div className="text-dnd-gold font-body tracking-widest animate-pulse text-xl">
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-dnd-jade font-body tracking-widest animate-pulse text-xl">
           Entering the battlefield…
         </div>
       </div>
@@ -172,7 +172,7 @@ export default function EncounterViewPage() {
         </div>
       )}
       {!encounter.backgroundImageUrl && (
-        <div className="absolute inset-0 bg-adventure bg-dragon-scale pointer-events-none" />
+        <div className="absolute inset-0 bg-gradient-to-br from-dnd-dark to-dnd-black pointer-events-none" />
       )}
 
       {/* ── Top bar ───────────────────────────────────────────────── */}
@@ -204,95 +204,95 @@ export default function EncounterViewPage() {
       {/* ── Main split layout ─────────────────────────────────────── */}
       <div className="relative z-10 flex flex-1 overflow-hidden">
 
-        {/* ── LEFT: Active creature feature ─────────────────────── */}
-        <div className="flex-1 flex flex-col items-center justify-center p-8 gap-6">
+        {/* ── LEFT: Active creature — full-height ~1/3 column ──────── */}
+        <div className="w-1/3 flex-shrink-0 relative overflow-hidden">
           <AnimatePresence mode="wait">
             {active ? (
               <motion.div
                 key={active.id}
-                className="flex flex-col items-center gap-5 w-full max-w-sm"
-                initial={{ opacity: 0, scale: 0.92 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.92 }}
-                transition={{ duration: 0.4 }}
+                className="absolute inset-0"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.5 }}
               >
-                {/* Active turn label */}
-                <div className="flex items-center gap-2">
-                  <div className="w-2 h-2 rounded-full bg-dnd-gold animate-pulse" />
-                  <span className="text-dnd-gold font-body text-xs tracking-[0.3em] uppercase">Active Turn</span>
-                  <div className="w-2 h-2 rounded-full bg-dnd-gold animate-pulse" />
-                </div>
-
-                {/* Creature image */}
-                <div className={cn(
-                  'relative rounded-2xl overflow-hidden border-2 border-dnd-gold shadow-glow-gold w-full',
-                  active.status === 'dead' && 'grayscale',
-                )}>
-                  {active.initiativeImageUrl ? (
-                    <img
-                      src={active.initiativeImageUrl}
-                      alt={active.name}
-                      className="w-full object-cover"
-                      style={{ maxHeight: '340px' }}
-                    />
-                  ) : (
-                    <div className="w-full h-64 bg-dnd-surface flex items-center justify-center">
-                      {active.isPlayer
-                        ? <User className="w-24 h-24 text-dnd-gold/30" />
-                        : <Sword className="w-24 h-24 text-dnd-gold/30" />
-                      }
-                    </div>
-                  )}
-                  {/* Bottom gradient overlay with name */}
-                  <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 to-transparent pt-12 pb-4 px-5">
-                    <h2 className="font-display text-dnd-gold text-2xl" style={{ textShadow: '0 2px 12px rgba(0,0,0,0.8)' }}>
-                      {active.name}
-                    </h2>
-                    {active.isPlayer && (
-                      <span className="text-dnd-amber text-xs font-body tracking-widest">PLAYER CHARACTER</span>
+                {/* Creature image — fills full column top-to-bottom */}
+                {active.initiativeImageUrl ? (
+                  <img
+                    src={active.initiativeImageUrl}
+                    alt={active.name}
+                    className={cn(
+                      'absolute inset-0 w-full h-full object-cover object-top',
+                      active.status === 'dead' && 'grayscale',
                     )}
-                  </div>
-                </div>
-
-                {/* Stats row */}
-                <div className="w-full flex items-center justify-center gap-6 flex-wrap">
-                  {active.maxHp && (
-                    <div className="flex flex-col items-center gap-1 min-w-[80px]">
-                      <div className="flex items-center gap-1.5">
-                        <Heart className="w-4 h-4 text-red-400" />
-                        <span className="font-body text-dnd-parchment text-lg">
-                          {active.currentHp ?? active.maxHp}
-                          <span className="text-dnd-muted text-sm">/{active.maxHp}</span>
-                        </span>
-                      </div>
-                      <HpBar current={active.currentHp} max={active.maxHp} />
-                    </div>
-                  )}
-                  {active.armorClass && (
-                    <div className="flex items-center gap-1.5">
-                      <Shield className="w-4 h-4 text-sky-400" />
-                      <span className="font-body text-dnd-parchment text-lg">AC {active.armorClass}</span>
-                    </div>
-                  )}
-                  {activeStatus && active.status !== 'alive' && (
-                    <span className={cn('text-sm border rounded px-3 py-1 capitalize', activeStatus.color)}>
-                      {activeStatus.label}
-                    </span>
-                  )}
-                </div>
-
-                {/* Notes */}
-                {active.notes && (
-                  <div className="w-full bg-dnd-dark/70 border border-dnd-border/40 rounded-xl px-4 py-3">
-                    <p className="text-dnd-muted text-[10px] font-body tracking-widest uppercase mb-1">Notes</p>
-                    <p className="text-dnd-parchment/80 font-ui text-sm italic">{active.notes}</p>
+                  />
+                ) : (
+                  <div className="absolute inset-0 bg-dnd-dark flex items-center justify-center">
+                    {active.isPlayer
+                      ? <User className="w-32 h-32 text-dnd-jade/20" />
+                      : <Sword className="w-32 h-32 text-dnd-jade/20" />
+                    }
                   </div>
                 )}
+
+                {/* Left jade accent bar */}
+                <div className="absolute left-0 top-0 bottom-0 w-1 bg-dnd-jade shadow-glow-jade" />
+
+                {/* Bottom overlay: name, stats, status */}
+                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/95 via-black/70 to-transparent pt-32 pb-6 px-6">
+                  {/* Active badge */}
+                  <div className="flex items-center gap-2 mb-3">
+                    <div className="w-2 h-2 rounded-full bg-dnd-jade animate-pulse" />
+                    <span className="text-dnd-jade font-body text-[10px] tracking-[0.35em] uppercase">Active Turn</span>
+                    <div className="w-2 h-2 rounded-full bg-dnd-jade animate-pulse" />
+                  </div>
+
+                  <h2 className="font-display text-dnd-parchment text-3xl leading-tight" style={{ textShadow: '0 2px 16px rgba(0,0,0,0.9)' }}>
+                    {active.name}
+                  </h2>
+                  {active.isPlayer && (
+                    <span className="text-dnd-jade text-xs font-body tracking-widest">PLAYER CHARACTER</span>
+                  )}
+
+                  {/* Stats */}
+                  <div className="flex items-center gap-4 mt-3 flex-wrap">
+                    {active.maxHp && (
+                      <div className="flex flex-col gap-1">
+                        <div className="flex items-center gap-1.5">
+                          <Heart className="w-3.5 h-3.5 text-red-400" />
+                          <span className="font-body text-dnd-parchment text-base">
+                            {active.currentHp ?? active.maxHp}
+                            <span className="text-dnd-muted text-sm">/{active.maxHp}</span>
+                          </span>
+                        </div>
+                        <HpBar current={active.currentHp} max={active.maxHp} />
+                      </div>
+                    )}
+                    {active.armorClass && (
+                      <div className="flex items-center gap-1.5">
+                        <Shield className="w-3.5 h-3.5 text-sky-400" />
+                        <span className="font-body text-dnd-parchment text-base">AC {active.armorClass}</span>
+                      </div>
+                    )}
+                    {activeStatus && active.status !== 'alive' && (
+                      <span className={cn('text-xs border rounded px-2 py-0.5 capitalize', activeStatus.color)}>
+                        {activeStatus.label}
+                      </span>
+                    )}
+                  </div>
+
+                  {/* Notes */}
+                  {active.notes && (
+                    <div className="mt-3 bg-dnd-dark/60 border border-dnd-border/40 rounded-lg px-3 py-2">
+                      <p className="text-dnd-parchment/75 font-ui text-sm italic">{active.notes}</p>
+                    </div>
+                  )}
+                </div>
               </motion.div>
             ) : (
-              <motion.p className="text-dnd-muted font-ui italic" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-                No active creature
-              </motion.p>
+              <div className="absolute inset-0 flex items-center justify-center">
+                <p className="text-dnd-muted font-ui italic">No active creature</p>
+              </div>
             )}
           </AnimatePresence>
         </div>
@@ -300,11 +300,11 @@ export default function EncounterViewPage() {
         {/* ── Divider ───────────────────────────────────────────── */}
         <div className="w-px bg-gradient-to-b from-transparent via-dnd-border/50 to-transparent self-stretch" />
 
-        {/* ── RIGHT: Initiative order ────────────────────────────── */}
-        <div className="w-80 xl:w-96 flex flex-col bg-black/30 backdrop-blur-sm">
+        {/* ── RIGHT: Initiative order — remaining ~2/3 ─────────────── */}
+        <div className="flex-1 flex flex-col bg-black/30 backdrop-blur-sm">
           {/* Header */}
           <div className="px-5 py-4 border-b border-dnd-border/30 flex items-center gap-2">
-            <span className="font-body text-dnd-gold text-xs tracking-[0.3em] uppercase">Initiative Order</span>
+            <span className="font-body text-dnd-jade text-xs tracking-[0.3em] uppercase">Initiative Order</span>
             <span className="ml-auto text-xs text-dnd-muted font-ui">
               {sorted.filter(c => c.status !== 'dead').length} active
             </span>

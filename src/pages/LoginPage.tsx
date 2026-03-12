@@ -3,6 +3,7 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { useAuth } from '@/contexts/AuthContext'
+import { useLocation } from 'react-router-dom'
 import toast from 'react-hot-toast'
 import { Eye, EyeOff, Shield } from 'lucide-react'
 
@@ -24,7 +25,10 @@ type RegisterForm = z.infer<typeof registerSchema>
 
 export default function LoginPage() {
   const { login, register: registerUser } = useAuth()
-  const [mode, setMode]         = useState<'login' | 'register'>('login')
+  const location = useLocation()
+  const [mode, setMode] = useState<'login' | 'register'>(
+    (location.state as { mode?: string } | null)?.mode === 'register' ? 'register' : 'login'
+  )
   const [showPass, setShowPass] = useState(false)
   const [loading, setLoading]   = useState(false)
 
@@ -61,7 +65,7 @@ export default function LoginPage() {
   })
 
   return (
-    <div className="min-h-screen bg-adventure bg-dragon-scale flex items-center justify-center p-4">
+    <div className="min-h-screen bg-adventure flex items-center justify-center p-4">
       {/* Atmospheric background glows */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-64 bg-dnd-amber/5 rounded-full blur-3xl" />
@@ -72,10 +76,10 @@ export default function LoginPage() {
       <div className="relative w-full max-w-md">
         {/* Logo */}
         <div className="text-center mb-10">
-          <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-dnd-crimson/20 border-2 border-dnd-crimson mb-4 shadow-glow-red">
-            <Shield className="w-10 h-10 text-dnd-gold" />
+          <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-dnd-teal/20 border-2 border-dnd-jade mb-4 shadow-glow-jade">
+            <Shield className="w-10 h-10 text-dnd-jade" />
           </div>
-          <h1 className="font-display text-3xl text-dnd-gold tracking-widest">KARSUS</h1>
+          <h1 className="font-display text-3xl text-dnd-jade tracking-widest">KARSUS</h1>
           <p className="font-body text-dnd-muted tracking-[0.3em] text-sm mt-1">INITIATIVE TRACKER</p>
         </div>
 
