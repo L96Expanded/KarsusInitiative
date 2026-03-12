@@ -8,6 +8,7 @@
     "BLOB_CONNECTION_STRING":  "<YOUR_BLOB_STORAGE_CONNECTION_STRING>",
     "BLOB_CONTAINER_NAME":     "images",
     "JWT_SECRET":              "<GENERATE: node -e \"console.log(require('crypto').randomBytes(48).toString('base64'))\">  (min 32 chars)",
-    "JWT_EXPIRES_IN":          "7d"
+    "JWT_EXPIRES_IN":          "7d",
+    "PUBSUB_CONNECTION_STRING": "<YOUR_AZURE_WEB_PUBSUB_CONNECTION_STRING>"
   }
 }

@@ -1,8 +1,9 @@
 import { useParams } from 'react-router-dom'
-import { useQuery } from '@tanstack/react-query'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Heart, Shield, Sword, User, ChevronUp } from 'lucide-react'
 import { encountersApi } from '@/api/encounters'
+import { useEncounterLive } from '@/hooks/useEncounterLive'
 import { cn } from '@/lib/utils'
 import type { Creature } from '@/types'
 
@@ -131,13 +132,19 @@ function InitiativeRow({ creature, isActive, rank }: { creature: Creature; isAct
 
 export default function EncounterViewPage() {
   const { id } = useParams<{ id: string }>()
+  const qc = useQueryClient()
 
-  // Auto-poll every 2s to sync with control window
+  // Initial load + 30s heartbeat poll (WebSocket is the primary sync path)
   const { data: encounter, isLoading } = useQuery({
     queryKey: ['encounters', id, 'view'],
     queryFn: () => encountersApi.get(id!),
     enabled: !!id,
-    refetchInterval: 2000,
+    refetchInterval: 30_000,
+  })
+
+  // Real-time WebSocket updates — patches the cache immediately on any change
+  useEncounterLive(id, (enc) => {
+    qc.setQueryData(['encounters', id, 'view'], enc)
   })
 
   if (isLoading || !encounter) {
@@ -191,7 +198,7 @@ export default function EncounterViewPage() {
           </div>
         </div>
 
-        <p className="text-dnd-muted/40 text-[10px] font-ui italic">Display Window · Updated automatically</p>
+        <p className="text-dnd-muted/40 text-[10px] font-ui italic">Display Window · Live sync</p>
       </header>
 
       {/* ── Main split layout ─────────────────────────────────────── */}

@@ -7,6 +7,7 @@
 import { v4 as uuidv4 } from 'uuid'
 import { encountersContainer, presetsContainer } from '../lib/cosmosdb'
 import { authenticate } from '../lib/auth'
+import { broadcastEncounter } from '../lib/pubsub'
 import type { Creature, Encounter } from '../types'
 
 // â”€â”€â”€ Helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
@@ -193,6 +194,7 @@ async function updateEncounter(req: HttpRequest, _ctx: InvocationContext): Promi
       updatedAt:          new Date().toISOString(),
     }
     await container.item(id, userId).replace(updated)
+    void broadcastEncounter(id, updated)
     return json(updated)
   } catch (e: unknown) {
     return err((e instanceof Error ? e.message : 'Error'), (e as { status?: number }).status ?? 500)
@@ -245,6 +247,7 @@ async function addCreature(req: HttpRequest, _ctx: InvocationContext): Promise<H
       updatedAt: new Date().toISOString(),
     }
     await container.item(id, userId).replace(updated)
+    void broadcastEncounter(id, updated)
     return json(updated)
   } catch (e: unknown) {
     return err((e instanceof Error ? e.message : 'Error'), (e as { status?: number }).status ?? 500)
@@ -273,6 +276,7 @@ async function updateCreature(req: HttpRequest, _ctx: InvocationContext): Promis
       updatedAt: new Date().toISOString(),
     }
     await container.item(id, userId).replace(updated)
+    void broadcastEncounter(id, updated)
     return json(updated)
   } catch (e: unknown) {
     return err((e instanceof Error ? e.message : 'Error'), (e as { status?: number }).status ?? 500)
@@ -307,6 +311,7 @@ async function deleteCreature(req: HttpRequest, _ctx: InvocationContext): Promis
       updatedAt: new Date().toISOString(),
     }
     await container.item(id, userId).replace(updated)
+    void broadcastEncounter(id, updated)
     return json(updated)
   } catch (e: unknown) {
     return err((e instanceof Error ? e.message : 'Error'), (e as { status?: number }).status ?? 500)
@@ -325,6 +330,7 @@ async function nextTurn(req: HttpRequest, _ctx: InvocationContext): Promise<Http
     const turn = advanceTurn(enc, 'next')
     const updated = { ...enc, ...turn, updatedAt: new Date().toISOString() }
     await container.item(id, userId).replace(updated)
+    void broadcastEncounter(id, updated)
     return json({ currentTurn: updated.currentTurn, currentRound: updated.currentRound, creatures: updated.creatures })
   } catch (e: unknown) {
     return err((e instanceof Error ? e.message : 'Error'), (e as { status?: number }).status ?? 500)
@@ -343,6 +349,7 @@ async function prevTurn(req: HttpRequest, _ctx: InvocationContext): Promise<Http
     const turn = advanceTurn(enc, 'prev')
     const updated = { ...enc, ...turn, updatedAt: new Date().toISOString() }
     await container.item(id, userId).replace(updated)
+    void broadcastEncounter(id, updated)
     return json({ currentTurn: updated.currentTurn, currentRound: updated.currentRound, creatures: updated.creatures })
   } catch (e: unknown) {
     return err((e instanceof Error ? e.message : 'Error'), (e as { status?: number }).status ?? 500)

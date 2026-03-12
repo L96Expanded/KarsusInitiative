@@ -12,6 +12,7 @@ import CreatureForm from '@/components/creatures/CreatureForm'
 import EncounterForm from '@/components/encounters/EncounterForm'
 
 import { encountersApi } from '@/api/encounters'
+import { useEncounterLive } from '@/hooks/useEncounterLive'
 import type { Creature } from '@/types'
 
 export default function EncounterPage() {
@@ -36,6 +37,12 @@ export default function EncounterPage() {
     queryKey: ['encounters', id],
     queryFn: () => encountersApi.get(id!),
     enabled: !!id,
+  })
+
+  // ── Real-time sync ────────────────────────────────────────────────────────
+  // Patches the local cache when another device (e.g. phone) makes a change
+  useEncounterLive(id, (enc) => {
+    qc.setQueryData(['encounters', id], enc)
   })
 
   // ── Mutations ─────────────────────────────────────────────────────────────

@@ -47,16 +47,25 @@ module keyVault 'modules/keyvault.bicep' = {
   }
 }
 
+module pubsub 'modules/pubsub.bicep' = {
+  name: 'pubsub'
+  params: {
+    serviceName: '${prefix}-pubsub-${suffix}'
+    location:    location
+  }
+}
+
 module staticWebApp 'modules/staticwebapp.bicep' = {
   name: 'staticwebapp'
   params: {
-    appName:                '${prefix}-swa-${suffix}'
-    location:               staticWebAppLocation
-    cosmosConnectionString: cosmos.outputs.connectionString
-    blobConnectionString:   storage.outputs.connectionString
-    jwtSecret:              jwtSecret
-    cosmosDatabaseName:     'dndtracker'
-    blobContainerName:      'images'
+    appName:                  '${prefix}-swa-${suffix}'
+    location:                 staticWebAppLocation
+    cosmosConnectionString:   cosmos.outputs.connectionString
+    blobConnectionString:     storage.outputs.connectionString
+    jwtSecret:                jwtSecret
+    cosmosDatabaseName:       'dndtracker'
+    blobContainerName:        'images'
+    pubsubConnectionString:   pubsub.outputs.connectionString
   }
 }
 
@@ -66,3 +75,4 @@ output cosmosAccountName    string = cosmos.outputs.accountName
 output staticWebAppName     string = staticWebApp.outputs.appName
 output staticWebAppHostname string = staticWebApp.outputs.hostname
 output staticWebAppUrl      string = staticWebApp.outputs.url
+output pubsubEndpoint       string = pubsub.outputs.endpoint
