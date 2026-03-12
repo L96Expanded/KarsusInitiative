@@ -3,9 +3,9 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { useAuth } from '@/contexts/AuthContext'
-import { useLocation } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import toast from 'react-hot-toast'
-import { Eye, EyeOff, Shield } from 'lucide-react'
+import { Eye, EyeOff, Shield, ArrowLeft } from 'lucide-react'
 
 const loginSchema = z.object({
   email:    z.string().email('Enter a valid email'),
@@ -26,6 +26,7 @@ type RegisterForm = z.infer<typeof registerSchema>
 export default function LoginPage() {
   const { login, register: registerUser } = useAuth()
   const location = useLocation()
+  const navigate = useNavigate()
   const [mode, setMode] = useState<'login' | 'register'>(
     (location.state as { mode?: string } | null)?.mode === 'register' ? 'register' : 'login'
   )
@@ -74,6 +75,16 @@ export default function LoginPage() {
       </div>
 
       <div className="relative w-full max-w-md">
+        {/* Back to landing */}
+        <div className="mb-6">
+          <button
+            onClick={() => navigate('/')}
+            className="flex items-center gap-1.5 text-dnd-muted hover:text-dnd-parchment font-body text-sm tracking-wider transition-colors"
+          >
+            <ArrowLeft className="w-4 h-4" /> Back
+          </button>
+        </div>
+
         {/* Logo */}
         <div className="text-center mb-10">
           <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-dnd-teal/20 border-2 border-dnd-jade mb-4 shadow-glow-jade">

@@ -135,11 +135,11 @@ export default function EncounterPage() {
 
   return (
     <Layout title={encounter.title}>
-      {/* Background image — subtle ambient presence */}
+      {/* Background image — if present, replaces the global city bg */}
       {encounter.backgroundImageUrl && (
-        <div className="fixed inset-0 pointer-events-none z-0">
-          <img src={encounter.backgroundImageUrl} alt="" className="w-full h-full object-cover opacity-[0.12]" />
-          <div className="absolute inset-0 bg-gradient-to-b from-dnd-black/60 via-transparent to-dnd-black/80" />
+        <div className="fixed inset-0 pointer-events-none z-0 bg-dnd-black">
+          <img src={encounter.backgroundImageUrl} alt="" className="w-full h-full object-cover opacity-[0.22]" />
+          <div className="absolute inset-0 bg-gradient-to-b from-dnd-black/50 via-transparent to-dnd-black/70" />
         </div>
       )}
 

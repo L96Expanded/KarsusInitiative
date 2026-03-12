@@ -2,6 +2,59 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ─── COLOR THEME VARIABLES ────────────────────────────────────────────────
+   Each theme overrides primary/accent color vars. All component classes
+   read from these vars so a single data-theme attribute changes everything.
+   ─────────────────────────────────────────────────────────────────────── */
+:root {
+  --theme-primary:     #0D9488;
+  --theme-primary-rgb: 13, 148, 136;
+  --theme-accent:      #2DD4BF;
+  --theme-accent-rgb:  45, 212, 191;
+}
+html[data-theme="black"] {
+  --theme-primary:     #4B5563;
+  --theme-primary-rgb: 75, 85, 99;
+  --theme-accent:      #9CA3AF;
+  --theme-accent-rgb:  156, 163, 175;
+}
+html[data-theme="white"] {
+  --theme-primary:     #94A3B8;
+  --theme-primary-rgb: 148, 163, 184;
+  --theme-accent:      #E2E8F0;
+  --theme-accent-rgb:  226, 232, 240;
+}
+html[data-theme="red"] {
+  --theme-primary:     #B91C1C;
+  --theme-primary-rgb: 185, 28, 28;
+  --theme-accent:      #EF4444;
+  --theme-accent-rgb:  239, 68, 68;
+}
+html[data-theme="yellow"] {
+  --theme-primary:     #D97706;
+  --theme-primary-rgb: 217, 119, 6;
+  --theme-accent:      #FBBF24;
+  --theme-accent-rgb:  251, 191, 36;
+}
+html[data-theme="green"] {
+  --theme-primary:     #059669;
+  --theme-primary-rgb: 5, 150, 105;
+  --theme-accent:      #34D399;
+  --theme-accent-rgb:  52, 211, 153;
+}
+html[data-theme="orange"] {
+  --theme-primary:     #EA580C;
+  --theme-primary-rgb: 234, 88, 12;
+  --theme-accent:      #FB923C;
+  --theme-accent-rgb:  251, 146, 60;
+}
+html[data-theme="purple"] {
+  --theme-primary:     #7C3AED;
+  --theme-primary-rgb: 124, 58, 237;
+  --theme-accent:      #A78BFA;
+  --theme-accent-rgb:  167, 139, 250;
+}
+
 @layer base {
   html, body {
     @apply bg-dnd-black text-dnd-parchment;
@@ -28,7 +81,7 @@
     @apply bg-dnd-stone/60 rounded-full;
   }
   ::-webkit-scrollbar-thumb:hover {
-    @apply bg-dnd-jade;
+    background-color: var(--theme-accent);
   }
 }
 
@@ -38,16 +91,25 @@
   }
 
   .dnd-button-primary {
-    @apply bg-dnd-teal hover:bg-dnd-jade text-white font-body tracking-wider
+    @apply text-white font-body tracking-wider
            px-6 py-2.5 rounded-lg transition-all duration-200
-           shadow-md hover:shadow-glow-teal active:scale-95
+           shadow-md active:scale-95
            disabled:opacity-50 disabled:cursor-not-allowed;
+    background-color: var(--theme-primary);
+  }
+  .dnd-button-primary:hover:not(:disabled) {
+    background-color: var(--theme-accent);
+    box-shadow: 0 0 24px rgba(var(--theme-accent-rgb), 0.5);
   }
 
   .dnd-button-secondary {
-    @apply bg-transparent border border-dnd-jade text-dnd-jade hover:bg-dnd-jade/10
-           font-body tracking-wider px-6 py-2.5 rounded-lg transition-all duration-200
+    @apply bg-transparent font-body tracking-wider px-6 py-2.5 rounded-lg transition-all duration-200
            active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed;
+    border: 1px solid var(--theme-accent);
+    color: var(--theme-accent);
+  }
+  .dnd-button-secondary:hover:not(:disabled) {
+    background-color: rgba(var(--theme-accent-rgb), 0.1);
   }
 
   .dnd-button-ghost {
@@ -58,16 +120,21 @@
   .dnd-input {
     @apply bg-dnd-dark/80 border border-dnd-border rounded-lg px-4 py-2.5
            text-dnd-parchment placeholder:text-dnd-muted font-ui
-           focus:outline-none focus:border-dnd-jade focus:ring-1 focus:ring-dnd-jade/30
-           transition-colors duration-200 w-full;
+           focus:outline-none transition-colors duration-200 w-full;
+  }
+  .dnd-input:focus {
+    border-color: var(--theme-accent);
+    box-shadow: 0 0 0 1px rgba(var(--theme-accent-rgb), 0.3);
   }
 
   .dnd-label {
-    @apply block text-dnd-jade font-body text-sm tracking-widest uppercase mb-1.5;
+    @apply block font-body text-sm tracking-widest uppercase mb-1.5;
+    color: var(--theme-accent);
   }
 
   .initiative-active {
-    @apply ring-2 ring-dnd-jade animate-pulse-gold;
+    @apply animate-pulse-gold;
+    box-shadow: 0 0 0 2px var(--theme-accent);
   }
 }
 
