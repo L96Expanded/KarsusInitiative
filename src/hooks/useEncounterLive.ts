@@ -47,6 +47,12 @@ export function useEncounterLive(
       })
 
       await client.start()
+
+      // Explicitly join the group — token-based auto-join doesn't always fire
+      // when the window is already open and the WebSocket reconnects.
+      if (!cancelled) {
+        await client.joinGroup(`encounter-${encounterId}`)
+      }
     }
 
     connect().catch(() => {

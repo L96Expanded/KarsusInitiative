@@ -139,7 +139,7 @@ export default function EncounterViewPage() {
     queryKey: ['encounters', id, 'view'],
     queryFn: () => encountersApi.get(id!),
     enabled: !!id,
-    refetchInterval: 30_000,
+    refetchInterval: 3_000,
   })
 
   // Real-time WebSocket updates — patches the cache immediately on any change

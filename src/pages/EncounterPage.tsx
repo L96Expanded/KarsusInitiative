@@ -7,7 +7,7 @@ import toast from 'react-hot-toast'
 import Layout from '@/components/ui/Layout'
 import Modal from '@/components/ui/Modal'
 import ConfirmDelete from '@/components/ui/ConfirmDelete'
-import CreatureCard from '@/components/creatures/CreatureCard'
+import CreatureRow from '@/components/creatures/CreatureRow'
 import CreatureForm from '@/components/creatures/CreatureForm'
 import EncounterForm from '@/components/encounters/EncounterForm'
 
@@ -20,7 +20,7 @@ export default function EncounterPage() {
   const navigate = useNavigate()
   const qc = useQueryClient()
 
-  const [creatureModal, setCreatureModal] = useState<{ open: boolean; editing?: Creature }>({ open: false })
+  const [addModal,      setAddModal]      = useState(false)
   const [editModal,     setEditModal]     = useState(false)
   const [deleteCreature,setDeleteCreature]= useState<Creature | null>(null)
 
@@ -37,6 +37,7 @@ export default function EncounterPage() {
     queryKey: ['encounters', id],
     queryFn: () => encountersApi.get(id!),
     enabled: !!id,
+    refetchInterval: 5_000,
   })
 
   // ── Real-time sync ────────────────────────────────────────────────────────
@@ -62,7 +63,7 @@ export default function EncounterPage() {
       encountersApi.addCreature(id!, data),
     onSuccess: (updated) => {
       qc.setQueryData(['encounters', id], updated)
-      setCreatureModal({ open: false })
+      setAddModal(false)
       toast.success('Creature added')
     },
     onError: (e: Error) => toast.error(e.message),
@@ -73,8 +74,6 @@ export default function EncounterPage() {
       encountersApi.updateCreature(id!, cid, data),
     onSuccess: (updated) => {
       qc.setQueryData(['encounters', id], updated)
-      setCreatureModal({ open: false })
-      toast.success('Creature updated')
     },
     onError: (e: Error) => toast.error(e.message),
   })
@@ -216,7 +215,7 @@ export default function EncounterPage() {
               Creatures <span className="text-dnd-muted text-sm">({sorted.length})</span>
             </h2>
             <button
-              onClick={() => setCreatureModal({ open: true })}
+              onClick={() => setAddModal(true)}
               className="dnd-button-secondary flex items-center gap-1.5 py-1.5 px-3 text-sm"
             >
               <Plus className="w-4 h-4" /> Add Creature
@@ -227,20 +226,20 @@ export default function EncounterPage() {
             <div className="dnd-card p-10 text-center">
               <p className="text-dnd-muted font-ui italic">No creatures yet. Add the combatants!</p>
               <button
-                onClick={() => setCreatureModal({ open: true })}
+                onClick={() => setAddModal(true)}
                 className="dnd-button-secondary mt-4 inline-flex items-center gap-1.5 text-sm"
               >
                 <Plus className="w-4 h-4" /> Add Creature
               </button>
             </div>
           ) : (
-            <div className="space-y-2">
+            <div className="space-y-1.5">
               {sorted.map((creature, i) => (
-                <CreatureCard
+                <CreatureRow
                   key={creature.id}
                   creature={creature}
                   isActive={i === encounter.currentTurn}
-                  onEdit={() => setCreatureModal({ open: true, editing: creature })}
+                  onSave={(data) => editCreature.mutate({ cid: creature.id, data })}
                   onDelete={() => setDeleteCreature(creature)}
                 />
               ))}
@@ -261,24 +260,17 @@ export default function EncounterPage() {
         />
       </Modal>
 
-      {/* Add / edit creature */}
+      {/* Add creature */}
       <Modal
-        open={creatureModal.open}
-        onClose={() => setCreatureModal({ open: false })}
-        title={creatureModal.editing ? 'Edit Creature' : 'Add Creature'}
+        open={addModal}
+        onClose={() => setAddModal(false)}
+        title="Add Creature"
         size="lg"
       >
         <CreatureForm
-          initial={creatureModal.editing}
-          onCancel={() => setCreatureModal({ open: false })}
-          loading={addCreature.isPending || editCreature.isPending}
-          onSubmit={(data) => {
-            if (creatureModal.editing) {
-              editCreature.mutate({ cid: creatureModal.editing.id, data })
-            } else {
-              addCreature.mutate(data)
-            }
-          }}
+          onCancel={() => setAddModal(false)}
+          loading={addCreature.isPending}
+          onSubmit={(data) => addCreature.mutate(data)}
         />
       </Modal>
 
