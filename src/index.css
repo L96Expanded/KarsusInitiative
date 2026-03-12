@@ -3,63 +3,121 @@
 @tailwind utilities;
 
 /* ─── COLOR THEME VARIABLES ────────────────────────────────────────────────
-   Each theme overrides primary/accent color vars. All component classes
-   read from these vars so a single data-theme attribute changes everything.
+   Each theme overrides BOTH the primary/accent colors AND the background
+   dark palette, so the whole UI shifts when switching themes.
    ─────────────────────────────────────────────────────────────────────── */
 :root {
+  /* Teal (default) — navy ocean darks */
   --theme-primary:     #0D9488;
   --theme-primary-rgb: 13, 148, 136;
   --theme-accent:      #2DD4BF;
   --theme-accent-rgb:  45, 212, 191;
+  --bg-black:          #050F14;
+  --bg-dark:           #081820;
+  --bg-dark-rgb:       8, 24, 32;
+  --bg-surface:        #0D2530;
+  --bg-card:           #102B38;
+  --bg-card-rgb:       16, 43, 56;
+  --bg-border:         #1A4055;
 }
 html[data-theme="black"] {
   --theme-primary:     #4B5563;
   --theme-primary-rgb: 75, 85, 99;
   --theme-accent:      #9CA3AF;
   --theme-accent-rgb:  156, 163, 175;
+  --bg-black:          #060606;
+  --bg-dark:           #0F0F0F;
+  --bg-dark-rgb:       15, 15, 15;
+  --bg-surface:        #1A1A1A;
+  --bg-card:           #222222;
+  --bg-card-rgb:       34, 34, 34;
+  --bg-border:         #383838;
 }
 html[data-theme="white"] {
   --theme-primary:     #94A3B8;
   --theme-primary-rgb: 148, 163, 184;
   --theme-accent:      #E2E8F0;
   --theme-accent-rgb:  226, 232, 240;
+  --bg-black:          #0D0E10;
+  --bg-dark:           #14161A;
+  --bg-dark-rgb:       20, 22, 26;
+  --bg-surface:        #1E2228;
+  --bg-card:           #252B34;
+  --bg-card-rgb:       37, 43, 52;
+  --bg-border:         #3A4455;
 }
 html[data-theme="red"] {
   --theme-primary:     #B91C1C;
   --theme-primary-rgb: 185, 28, 28;
   --theme-accent:      #EF4444;
   --theme-accent-rgb:  239, 68, 68;
+  --bg-black:          #0F0404;
+  --bg-dark:           #1A0707;
+  --bg-dark-rgb:       26, 7, 7;
+  --bg-surface:        #240C0C;
+  --bg-card:           #2E1111;
+  --bg-card-rgb:       46, 17, 17;
+  --bg-border:         #4A1C1C;
 }
 html[data-theme="yellow"] {
   --theme-primary:     #D97706;
   --theme-primary-rgb: 217, 119, 6;
   --theme-accent:      #FBBF24;
   --theme-accent-rgb:  251, 191, 36;
+  --bg-black:          #0F0C03;
+  --bg-dark:           #1A1404;
+  --bg-dark-rgb:       26, 20, 4;
+  --bg-surface:        #251808;
+  --bg-card:           #2E1E0A;
+  --bg-card-rgb:       46, 30, 10;
+  --bg-border:         #4A320F;
 }
 html[data-theme="green"] {
   --theme-primary:     #059669;
   --theme-primary-rgb: 5, 150, 105;
   --theme-accent:      #34D399;
   --theme-accent-rgb:  52, 211, 153;
+  --bg-black:          #040E06;
+  --bg-dark:           #071809;
+  --bg-dark-rgb:       7, 24, 9;
+  --bg-surface:        #0C230D;
+  --bg-card:           #0F2C11;
+  --bg-card-rgb:       15, 44, 17;
+  --bg-border:         #174418;
 }
 html[data-theme="orange"] {
   --theme-primary:     #EA580C;
   --theme-primary-rgb: 234, 88, 12;
   --theme-accent:      #FB923C;
   --theme-accent-rgb:  251, 146, 60;
+  --bg-black:          #0F0703;
+  --bg-dark:           #1A0E04;
+  --bg-dark-rgb:       26, 14, 4;
+  --bg-surface:        #241407;
+  --bg-card:           #2E1909;
+  --bg-card-rgb:       46, 25, 9;
+  --bg-border:         #4A2A10;
 }
 html[data-theme="purple"] {
   --theme-primary:     #7C3AED;
   --theme-primary-rgb: 124, 58, 237;
   --theme-accent:      #A78BFA;
   --theme-accent-rgb:  167, 139, 250;
+  --bg-black:          #08040F;
+  --bg-dark:           #0F0619;
+  --bg-dark-rgb:       15, 6, 25;
+  --bg-surface:        #180C25;
+  --bg-card:           #1E112E;
+  --bg-card-rgb:       30, 17, 46;
+  --bg-border:         #321A4A;
 }
 
 @layer base {
   html, body {
-    @apply bg-dnd-black text-dnd-parchment;
+    @apply text-dnd-parchment;
     font-family: 'IM Fell English', Georgia, serif;
     -webkit-font-smoothing: antialiased;
+    background-color: var(--bg-black);
     background-image: url('/bg-city.jpg');
     background-size: cover;
     background-position: center top;
@@ -67,7 +125,7 @@ html[data-theme="purple"] {
   }
 
   * {
-    @apply border-dnd-border;
+    border-color: var(--bg-border);
   }
 
   ::-webkit-scrollbar {
@@ -75,10 +133,11 @@ html[data-theme="purple"] {
     height: 8px;
   }
   ::-webkit-scrollbar-track {
-    @apply bg-dnd-dark;
+    background-color: var(--bg-dark);
   }
   ::-webkit-scrollbar-thumb {
-    @apply bg-dnd-stone/60 rounded-full;
+    background-color: rgba(var(--bg-card-rgb), 0.8);
+    border-radius: 9999px;
   }
   ::-webkit-scrollbar-thumb:hover {
     background-color: var(--theme-accent);
@@ -87,7 +146,17 @@ html[data-theme="purple"] {
 
 @layer components {
   .dnd-card {
-    @apply bg-dnd-card/85 backdrop-blur-sm border border-dnd-border rounded-xl shadow-card;
+    @apply backdrop-blur-sm rounded-xl shadow-card;
+    background-color: rgba(var(--bg-card-rgb), 0.88);
+    border: 1px solid var(--bg-border);
+  }
+
+  /* Sticky navbar — blurred, theme-tinted */
+  .dnd-header {
+    background-color: rgba(var(--bg-dark-rgb), 0.92);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--bg-border);
   }
 
   .dnd-button-primary {
@@ -118,9 +187,11 @@ html[data-theme="purple"] {
   }
 
   .dnd-input {
-    @apply bg-dnd-dark/80 border border-dnd-border rounded-lg px-4 py-2.5
+    @apply border rounded-lg px-4 py-2.5
            text-dnd-parchment placeholder:text-dnd-muted font-ui
            focus:outline-none transition-colors duration-200 w-full;
+    background-color: rgba(var(--bg-dark-rgb), 0.85);
+    border-color: var(--bg-border);
   }
   .dnd-input:focus {
     border-color: var(--theme-accent);

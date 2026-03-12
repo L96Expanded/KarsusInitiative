@@ -57,7 +57,7 @@ export default function Layout({ children, title }: LayoutProps) {
   return (
     <div className="min-h-screen flex flex-col">
       {/* Navbar */}
-      <header className="sticky top-0 z-40 bg-dnd-dark/90 backdrop-blur-md border-b border-dnd-border/50">
+      <header className="sticky top-0 z-40 dnd-header">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
           {/* Logo */}
           <button

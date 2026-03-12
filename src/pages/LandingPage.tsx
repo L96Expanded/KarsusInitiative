@@ -24,11 +24,17 @@ export default function LandingPage() {
       <header className="relative z-10 flex items-center justify-between px-8 py-5">
         {/* Logo */}
         <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-sm bg-dnd-teal/20 border border-dnd-jade/50 flex items-center justify-center backdrop-blur-sm">
-            <Shield className="w-5 h-5 text-dnd-jade" />
+          <div
+            className="w-9 h-9 rounded-sm flex items-center justify-center backdrop-blur-sm"
+            style={{
+              backgroundColor: 'rgba(var(--theme-primary-rgb), 0.22)',
+              border: '1px solid rgba(var(--theme-accent-rgb), 0.55)',
+            }}
+          >
+            <Shield className="w-5 h-5" style={{ color: 'var(--theme-accent)' }} />
           </div>
           <div className="leading-tight">
-            <span className="font-display text-dnd-jade text-base tracking-widest">KARSUS</span>
+            <span className="font-display text-base tracking-widest" style={{ color: 'var(--theme-accent)' }}>KARSUS</span>
             <span className="block font-body text-dnd-muted text-[10px] tracking-[0.3em]">INITIATIVE</span>
           </div>
         </div>
@@ -108,11 +114,40 @@ export default function LandingPage() {
             { icon: <ChevronRight className="w-5 h-5" />, title: 'Encounter Presets', desc: 'Save monster groups and drop them into any encounter in seconds.' },
           ].map(({ icon, title, desc }) => (
             <div key={title} className="flex flex-col items-center gap-2">
-              <div className="text-dnd-jade">{icon}</div>
+              <div style={{ color: 'var(--theme-accent)' }}>{icon}</div>
               <p className="font-body text-dnd-parchment text-sm tracking-wider">{title}</p>
               <p className="text-dnd-muted font-ui text-xs leading-relaxed">{desc}</p>
             </div>
           ))}
+        </div>
+
+        {/* Map art credit — bottom right */}
+        <div className="absolute bottom-3 right-6 sm:right-8 text-right text-white/50 text-[10px] font-ui leading-relaxed">
+          <p className="text-white/40 font-body tracking-[0.2em] uppercase mb-1">Map Art</p>
+          <a
+            href="https://smitchellmaps.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="block hover:text-white/80 transition-colors"
+          >
+            smitchellmaps.com
+          </a>
+          <a
+            href="https://patreon.com/smitchellmaps"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="block hover:text-white/80 transition-colors"
+          >
+            Patreon: @smitchellmaps
+          </a>
+          <a
+            href="https://instagram.com/smitchellarts"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="block hover:text-white/80 transition-colors"
+          >
+            Instagram: @smitchellarts
+          </a>
         </div>
       </footer>
     </div>
