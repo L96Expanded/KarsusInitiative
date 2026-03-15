@@ -43,7 +43,7 @@ export default function CreatureForm({ initial, onSubmit, onCancel, loading }: C
     defaultValues: {
       name:       initial?.name ?? '',
       initiative: initial?.initiative ?? 10,
-      status:     initial?.status ?? 'alive',
+      status:     initial?.statuses?.[0] ?? 'alive',
       maxHp:      initial?.maxHp ?? '',
       currentHp:  initial?.currentHp ?? '',
       armorClass: initial?.armorClass ?? '',
@@ -59,7 +59,7 @@ export default function CreatureForm({ initial, onSubmit, onCancel, loading }: C
     onSubmit({
       name: raw.name,
       initiative: raw.initiative,
-      status: raw.status,
+      statuses:   raw.status !== 'alive' ? [raw.status] : [],
       maxHp:      raw.maxHp      !== '' ? Number(raw.maxHp)      : undefined,
       currentHp:  raw.currentHp  !== '' ? Number(raw.currentHp)  : undefined,
       armorClass: raw.armorClass !== '' ? Number(raw.armorClass) : undefined,
