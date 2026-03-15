@@ -1,8 +1,17 @@
+import { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Shield, Sword, ChevronRight } from 'lucide-react'
 
 export default function LandingPage() {
   const navigate = useNavigate()
+
+  // Always render landing page with teal theme, regardless of user's theme setting
+  useEffect(() => {
+    const html = document.documentElement
+    const prev = html.getAttribute('data-theme')
+    html.setAttribute('data-theme', 'teal')
+    return () => { html.setAttribute('data-theme', prev ?? 'teal') }
+  }, [])
 
   return (
     <div className="relative min-h-screen flex flex-col overflow-hidden">

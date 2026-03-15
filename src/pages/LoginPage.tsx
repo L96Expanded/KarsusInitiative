@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -33,6 +33,14 @@ export default function LoginPage() {
   )
   const [showPass, setShowPass] = useState(false)
   const [loading, setLoading]   = useState(false)
+
+  // Always render login page with teal theme, regardless of user's theme setting
+  useEffect(() => {
+    const html = document.documentElement
+    const prev = html.getAttribute('data-theme')
+    html.setAttribute('data-theme', 'teal')
+    return () => { html.setAttribute('data-theme', prev ?? 'teal') }
+  }, [])
 
   const handleGoogleLogin = async (credential: string) => {
     setLoading(true)
