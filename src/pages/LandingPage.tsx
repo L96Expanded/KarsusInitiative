@@ -27,8 +27,8 @@ export default function LandingPage() {
           <div
             className="w-9 h-9 rounded-sm flex items-center justify-center backdrop-blur-sm"
             style={{
-              backgroundColor: 'rgba(var(--theme-primary-rgb), 0.22)',
-              border: '1px solid rgba(var(--theme-accent-rgb), 0.55)',
+              backgroundColor: 'rgb(var(--theme-primary-rgb) / 0.22)',
+              border: '1px solid rgb(var(--theme-accent-rgb) / 0.55)',
             }}
           >
             <Shield className="w-5 h-5" style={{ color: 'var(--theme-accent)' }} />

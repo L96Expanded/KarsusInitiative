@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://gray-pebble-02f1bc70f.6.azurestaticapps.net/sitemap.xml

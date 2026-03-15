@@ -94,7 +94,72 @@ async function me(req: HttpRequest, _ctx: InvocationContext): Promise<HttpRespon
   }
 }
 
+// ─── POST /api/auth/google ────────────────────────────────────────────────────
+async function googleAuth(req: HttpRequest, _ctx: InvocationContext): Promise<HttpResponseInit> {
+  try {
+    const { credential } = (await req.json()) as { credential?: string }
+    if (!credential || typeof credential !== 'string') return err('credential is required')
+
+    // Verify ID token with Google
+    const tokenInfoUrl = `https://oauth2.googleapis.com/tokeninfo?id_token=${encodeURIComponent(credential)}`
+    const googleRes = await fetch(tokenInfoUrl)
+    if (!googleRes.ok) return err('Invalid Google credential', 401)
+
+    const payload = await googleRes.json() as {
+      sub?: string; email?: string; name?: string; given_name?: string
+      aud?: string; email_verified?: string
+    }
+
+    const clientId = process.env.GOOGLE_CLIENT_ID
+    if (!clientId) return err('Google OAuth not configured', 500)
+    if (payload.aud !== clientId) return err('Invalid audience', 401)
+    if (payload.email_verified !== 'true') return err('Email not verified with Google', 401)
+
+    const { sub: googleId, email, name, given_name } = payload
+    if (!googleId || !email) return err('Incomplete Google profile', 400)
+
+    const container = await usersContainer()
+
+    // Look for existing user by googleId
+    let { resources } = await container.items
+      .query({ query: 'SELECT * FROM c WHERE c.googleId = @gid', parameters: [{ name: '@gid', value: googleId }] })
+      .fetchAll()
+    let user = resources[0]
+
+    if (!user) {
+      // Check by email (existing account with same address)
+      const byEmail = await container.items
+        .query({ query: 'SELECT * FROM c WHERE c.email = @email', parameters: [{ name: '@email', value: email.toLowerCase() }] })
+        .fetchAll()
+      user = byEmail.resources[0]
+      if (user) {
+        // Link Google account to existing user
+        const updated = { ...user, googleId }
+        await container.items.upsert(updated)
+        user = updated
+      }
+    }
+
+    if (!user) {
+      // Create new user
+      const rawName = given_name ?? name ?? email.split('@')[0]
+      const username = rawName.replace(/\s+/g, '_').slice(0, 30)
+      const now = new Date().toISOString()
+      user = { id: randomUUID(), email: email.toLowerCase(), username, googleId, createdAt: now }
+      await container.items.create(user)
+    }
+
+    const token = signToken({ userId: user.id, email: user.email })
+    return json({ token, user: { id: user.id, email: user.email, username: user.username, createdAt: user.createdAt } })
+  } catch (e: unknown) {
+    const status = (e as { status?: number }).status ?? 500
+    const message = (e instanceof Error) ? e.message : 'Internal error'
+    return err(message, status)
+  }
+}
+
 // ─── Register functions ───────────────────────────────────────────────────────
 app.http('auth-register', { methods: ['POST'], route: 'auth/register', authLevel: 'anonymous', handler: register })
 app.http('auth-login',    { methods: ['POST'], route: 'auth/login',    authLevel: 'anonymous', handler: login })
 app.http('auth-me',       { methods: ['GET'],  route: 'auth/me',       authLevel: 'anonymous', handler: me })
+app.http('auth-google',   { methods: ['POST'], route: 'auth/google',   authLevel: 'anonymous', handler: googleAuth })

@@ -18,7 +18,7 @@ import { uploadImage } from '../lib/blobStorage'
 
 const ALLOWED_MIMES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif']
 const BLOCKED_MIMES = ['text/html', 'application/javascript', 'image/svg+xml']
-const MAX_SIZE = 5 * 1024 * 1024
+const MAX_SIZE = 25 * 1024 * 1024
 
 // Re-test the validation logic that lives in blobStorage.ts
 describe('blobStorage validation (unit)', () => {
@@ -40,7 +40,7 @@ describe('blobStorage validation (unit)', () => {
     }
   })
 
-  it('5 MB limit constant is correct', () => {
+  it('25 MB limit constant is correct', () => {
     expect(MAX_SIZE).toBe(5242880)
   })
 

@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
+import { GoogleLogin } from '@react-oauth/google'
 import { useAuth } from '@/contexts/AuthContext'
 import { useLocation, useNavigate } from 'react-router-dom'
 import toast from 'react-hot-toast'
@@ -24,7 +25,7 @@ type LoginForm    = z.infer<typeof loginSchema>
 type RegisterForm = z.infer<typeof registerSchema>
 
 export default function LoginPage() {
-  const { login, register: registerUser } = useAuth()
+  const { login, register: registerUser, loginWithGoogle } = useAuth()
   const location = useLocation()
   const navigate = useNavigate()
   const [mode, setMode] = useState<'login' | 'register'>(
@@ -32,6 +33,18 @@ export default function LoginPage() {
   )
   const [showPass, setShowPass] = useState(false)
   const [loading, setLoading]   = useState(false)
+
+  const handleGoogleLogin = async (credential: string) => {
+    setLoading(true)
+    try {
+      await loginWithGoogle(credential)
+      toast.success('Welcome, adventurer!')
+    } catch (err: unknown) {
+      toast.error(err instanceof Error ? err.message : 'Google sign-in failed')
+    } finally {
+      setLoading(false)
+    }
+  }
 
   const loginForm = useForm<LoginForm>({
     resolver: zodResolver(loginSchema),
@@ -248,6 +261,26 @@ export default function LoginPage() {
               </button>
             </form>
           )}
+
+          {/* Google Sign In */}
+          <div className="mt-6 space-y-4">
+            <div className="flex items-center gap-3">
+              <div className="flex-1 h-px bg-dnd-border" />
+              <span className="text-dnd-muted text-xs font-ui tracking-wider">OR</span>
+              <div className="flex-1 h-px bg-dnd-border" />
+            </div>
+            <div className="flex justify-center">
+              <GoogleLogin
+                onSuccess={(res) => { if (res.credential) handleGoogleLogin(res.credential) }}
+                onError={() => toast.error('Google sign-in failed')}
+                theme="filled_black"
+                shape="rectangular"
+                size="large"
+                text="continue_with"
+                locale="en"
+              />
+            </div>
+          </div>
         </div>
 
         <p className="text-center text-dnd-muted text-xs mt-6 font-ui italic">

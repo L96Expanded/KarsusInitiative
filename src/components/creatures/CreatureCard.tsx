@@ -29,7 +29,8 @@ export default function CreatureCard({
   compact,
 }: CreatureCardProps) {
   const [showActions, setShowActions] = useState(false)
-  const statusStyle = STATUS_COLORS[creature.status] ?? 'bg-dnd-surface/40 text-dnd-muted border-dnd-border'
+  const activeStatuses = (creature.statuses ?? []).filter(s => s !== 'alive')
+  const statusStyle = STATUS_COLORS[activeStatuses[0] ?? 'alive'] ?? 'bg-dnd-surface/40 text-dnd-muted border-dnd-border'
   const hpPct = creature.maxHp && creature.currentHp != null
     ? Math.max(0, Math.min(100, (creature.currentHp / creature.maxHp) * 100))
     : null
@@ -39,7 +40,7 @@ export default function CreatureCard({
       className={cn(
         'relative dnd-card transition-all duration-300 group overflow-hidden',
         isActive && 'initiative-active',
-        creature.status === 'dead' && 'opacity-50',
+        creature.statuses?.includes('dead') && 'opacity-50',
       )}
       onMouseEnter={() => setShowActions(true)}
       onMouseLeave={() => setShowActions(false)}
@@ -88,9 +89,11 @@ export default function CreatureCard({
             <span className={cn('font-body text-sm font-medium truncate', isActive ? 'text-dnd-gold' : 'text-dnd-parchment')}>
               {creature.name}
             </span>
-            <span className={cn('text-[10px] border rounded px-1.5 py-0.5 capitalize', statusStyle)}>
-              {creature.status}
-            </span>
+            {activeStatuses.length > 0 && (
+              <span className={cn('text-[10px] border rounded px-1.5 py-0.5 capitalize', statusStyle)}>
+                {activeStatuses.join(', ')}
+              </span>
+            )}
           </div>
 
           {/* HP bar */}

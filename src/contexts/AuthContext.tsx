@@ -9,6 +9,7 @@ interface AuthContextValue {
   isLoading: boolean
   login: (email: string, password: string) => Promise<void>
   register: (email: string, username: string, password: string) => Promise<void>
+  loginWithGoogle: (credential: string) => Promise<void>
   logout: () => void
 }
 
@@ -51,6 +52,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser(res.user)
   }, [])
 
+  const loginWithGoogle = useCallback(async (credential: string) => {
+    const res = await authApi.googleLogin(credential)
+    localStorage.setItem('token', res.token)
+    setToken(res.token)
+    setUser(res.user)
+  }, [])
+
   const logout = useCallback(() => {
     localStorage.removeItem('token')
     setToken(null)
@@ -58,7 +66,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [])
 
   return (
-    <AuthContext.Provider value={{ user, token, isLoading, login, register, logout }}>
+    <AuthContext.Provider value={{ user, token, isLoading, login, register, loginWithGoogle, logout }}>
       {children}
     </AuthContext.Provider>
   )

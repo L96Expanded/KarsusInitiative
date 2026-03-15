@@ -34,7 +34,8 @@ function CreatureToken({ creature, isActive, index, total }: {
   const hpPct = creature.maxHp && creature.currentHp != null
     ? Math.max(0, Math.min(100, (creature.currentHp / creature.maxHp) * 100))
     : null
-  const statusColor = STATUS_COLORS[creature.status] ?? 'text-dnd-muted'
+  const firstStatus = (creature.statuses ?? []).find(s => s !== 'alive') ?? 'alive'
+  const statusColor = STATUS_COLORS[firstStatus] ?? 'text-dnd-muted'
 
   return (
     <motion.div
@@ -57,7 +58,7 @@ function CreatureToken({ creature, isActive, index, total }: {
             isActive
               ? 'w-20 h-20 border-dnd-gold shadow-glow-gold ring-4 ring-dnd-gold/30'
               : 'w-14 h-14 border-dnd-border opacity-80 hover:opacity-100',
-            creature.status === 'dead' && 'grayscale opacity-40',
+            creature.statuses?.includes('dead') && 'grayscale opacity-40',
           )}
           style={{ borderWidth: isActive ? 3 : 2 }}
         >
@@ -104,9 +105,9 @@ function CreatureToken({ creature, isActive, index, total }: {
         </span>
 
         {/* Status */}
-        {creature.status !== 'alive' && (
+        {(creature.statuses ?? []).some(s => s !== 'alive') && (
           <span className={cn('text-[10px] capitalize italic', statusColor)}>
-            {creature.status}
+            {(creature.statuses ?? []).filter(s => s !== 'alive').join(', ')}
           </span>
         )}
       </div>
@@ -188,8 +189,8 @@ export default function EncounterView({
                       </span>
                     )}
                   </div>
-                  {activeCreature.status !== 'alive' && (
-                    <p className="text-sm italic text-yellow-400 mt-1 capitalize">{activeCreature.status}</p>
+                  {(activeCreature.statuses ?? []).some(s => s !== 'alive') && (
+                    <p className="text-sm italic text-yellow-400 mt-1 capitalize">{(activeCreature.statuses ?? []).filter(s => s !== 'alive').join(', ')}</p>
                   )}
                 </motion.div>
               )}

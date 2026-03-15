@@ -8,23 +8,25 @@ export default {
     extend: {
       colors: {
         dnd: {
-          black:    '#050F14',   // deep night sky
-          dark:     '#081820',   // deep dusk
-          surface:  '#0D2530',   // twilight surface
-          card:     '#102B38',   // adventure card
-          border:   '#1A4055',   // horizon edge
-          crimson:  '#8B1C1C',   // danger — unchanged
-          red:      '#C0392B',   // bright danger — unchanged
-          gold:     '#E8A917',   // warm lantern gold
-          amber:    '#F5C842',   // bright treasure amber
-          teal:     '#0D9488',   // freedom teal (primary actions)
-          jade:     '#2DD4BF',   // aquamarine accent (focus / active)
-          parchment:'#D0EEE8',   // cool seafoam white (main text)
-          muted:    '#4D8A80',   // muted teal-grey
-          stone:    '#1E4A55',   // deep stone-teal
-          // legacy aliases
-          purple:   '#0D9488',
-          violet:   '#2DD4BF',
+          // ── Fully theme-responsive (vary per color theme) ──────────────────
+          black:    'var(--bg-black)',
+          dark:     'rgb(var(--bg-dark-rgb) / <alpha-value>)',
+          surface:  'rgb(var(--bg-surface-rgb) / <alpha-value>)',
+          card:     'rgb(var(--bg-card-rgb) / <alpha-value>)',
+          border:   'rgb(var(--bg-border-rgb) / <alpha-value>)',
+          parchment:'rgb(var(--color-text-rgb) / <alpha-value>)',
+          muted:    'rgb(var(--color-muted-rgb) / <alpha-value>)',
+          gold:     'rgb(var(--color-heading-rgb) / <alpha-value>)',
+          amber:    'rgb(var(--color-heading-bright-rgb) / <alpha-value>)',
+          teal:     'rgb(var(--theme-primary-rgb) / <alpha-value>)',
+          jade:     'rgb(var(--theme-accent-rgb) / <alpha-value>)',
+          stone:    'rgb(var(--bg-surface-rgb) / <alpha-value>)',
+          // legacy aliases — also theme-responsive
+          purple:   'rgb(var(--theme-primary-rgb) / <alpha-value>)',
+          violet:   'rgb(var(--theme-accent-rgb) / <alpha-value>)',
+          // ── Semantic danger colors — fixed (theme-invariant) ──────────────
+          crimson:  '#8B1C1C',
+          red:      '#C0392B',
         },
       },
       fontFamily: {

@@ -24,7 +24,7 @@ function getContainerClient() {
 }
 
 const ALLOWED_MIME = new Set(['image/jpeg', 'image/png', 'image/webp', 'image/gif'])
-const MAX_SIZE     = 5 * 1024 * 1024 // 5 MB
+const MAX_SIZE     = 25 * 1024 * 1024 // 25 MB
 
 export async function uploadImage(
   buffer: Buffer,
@@ -35,7 +35,7 @@ export async function uploadImage(
     throw Object.assign(new Error('Invalid image type'), { status: 400 })
   }
   if (buffer.byteLength > MAX_SIZE) {
-    throw Object.assign(new Error('Image exceeds 5 MB limit'), { status: 400 })
+    throw Object.assign(new Error('Image exceeds 25 MB limit'), { status: 400 })
   }
 
   const ext  = originalName.split('.').pop() ?? 'jpg'

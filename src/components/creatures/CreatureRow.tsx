@@ -1,14 +1,35 @@
-import { useEffect, useRef, useState } from 'react'
-import { ImagePlus, Trash2, User, Sword } from 'lucide-react'
+﻿import { useEffect, useRef, useState } from 'react'
+import { ImagePlus, Trash2, User, Sword, Plus, X } from 'lucide-react'
 import type { Creature, CreatureStatus } from '@/types'
 import { cn } from '@/lib/utils'
 import { uploadApi } from '@/api/upload'
 
-const ALL_STATUSES: CreatureStatus[] = [
-  'alive', 'unconscious', 'dead', 'concentrating', 'poisoned', 'stunned',
+/** Every addable condition (alive is implicit â€” never shown as a tag) */
+const ADDABLE: CreatureStatus[] = [
+  'unconscious', 'dead', 'concentrating', 'poisoned', 'stunned',
   'incapacitated', 'charmed', 'frightened', 'paralyzed', 'petrified',
   'blinded', 'deafened', 'invisible', 'prone', 'restrained', 'exhaustion',
 ]
+
+/** Colour pill for each condition */
+const STATUS_PILL: Record<string, string> = {
+  dead:          'bg-gray-800/60    text-gray-300    border-gray-600/50',
+  unconscious:   'bg-yellow-900/50  text-yellow-300  border-yellow-700/50',
+  concentrating: 'bg-sky-900/50     text-sky-300     border-sky-700/50',
+  poisoned:      'bg-lime-900/50    text-lime-300    border-lime-600/50',
+  stunned:       'bg-orange-900/50  text-orange-300  border-orange-700/50',
+  incapacitated: 'bg-red-900/50     text-red-300     border-red-700/50',
+  charmed:       'bg-pink-900/50    text-pink-300    border-pink-600/50',
+  frightened:    'bg-violet-900/50  text-violet-300  border-violet-700/50',
+  paralyzed:     'bg-amber-900/50   text-amber-200   border-amber-600/50',
+  petrified:     'bg-stone-700/50   text-stone-300   border-stone-500/50',
+  blinded:       'bg-neutral-800/60 text-neutral-300 border-neutral-600/50',
+  deafened:      'bg-slate-800/50   text-slate-300   border-slate-600/50',
+  invisible:     'bg-cyan-900/50    text-cyan-300    border-cyan-700/50',
+  prone:         'bg-amber-800/50   text-amber-300   border-amber-600/50',
+  restrained:    'bg-rose-900/50    text-rose-300    border-rose-700/50',
+  exhaustion:    'bg-indigo-900/50  text-indigo-300  border-indigo-700/50',
+}
 
 interface CreatureRowProps {
   creature: Creature
@@ -18,17 +39,31 @@ interface CreatureRowProps {
 }
 
 export default function CreatureRow({ creature, isActive, onSave, onDelete }: CreatureRowProps) {
-  const [nameEdit, setNameEdit]   = useState(false)
-  const [nameDraft, setNameDraft] = useState(creature.name)
-  const [initDraft, setInitDraft] = useState(String(creature.initiative))
-  const [acDraft, setAcDraft]     = useState(String(creature.armorClass ?? ''))
-  const [uploading, setUploading] = useState(false)
-  const fileRef = useRef<HTMLInputElement>(null)
+  const [nameEdit, setNameEdit]     = useState(false)
+  const [nameDraft, setNameDraft]   = useState(creature.name)
+  const [initDraft, setInitDraft]   = useState(String(creature.initiative))
+  const [acDraft, setAcDraft]       = useState(String(creature.armorClass ?? ''))
+  const [uploading, setUploading]   = useState(false)
+  const [statusOpen, setStatusOpen] = useState(false)
+  const fileRef      = useRef<HTMLInputElement>(null)
+  const statusRef    = useRef<HTMLDivElement>(null)
 
   // Sync drafts when creature changes from live sync updates
-  useEffect(() => { setNameDraft(creature.name) }, [creature.name])
+  useEffect(() => { setNameDraft(creature.name) },               [creature.name])
   useEffect(() => { setInitDraft(String(creature.initiative)) }, [creature.initiative])
   useEffect(() => { setAcDraft(String(creature.armorClass ?? '')) }, [creature.armorClass])
+
+  // Close status dropdown on outside click
+  useEffect(() => {
+    if (!statusOpen) return
+    function handle(e: MouseEvent) {
+      if (statusRef.current && !statusRef.current.contains(e.target as Node)) {
+        setStatusOpen(false)
+      }
+    }
+    document.addEventListener('mousedown', handle)
+    return () => document.removeEventListener('mousedown', handle)
+  }, [statusOpen])
 
   function commitName() {
     const trimmed = nameDraft.trim()
@@ -60,7 +95,23 @@ export default function CreatureRow({ creature, isActive, onSave, onDelete }: Cr
     }
   }
 
-  // Shared avatar element factory (same markup used in both layouts)
+  function addStatus(s: CreatureStatus) {
+    const current = creature.statuses ?? []
+    if (!current.includes(s)) onSave({ statuses: [...current.filter(x => x !== 'alive'), s] })
+    setStatusOpen(false)
+  }
+
+  function removeStatus(s: CreatureStatus) {
+    const next = (creature.statuses ?? []).filter(x => x !== s)
+    onSave({ statuses: next.length === 0 ? [] : next })
+  }
+
+  const activeStatuses = (creature.statuses ?? []).filter(s => s !== 'alive') as CreatureStatus[]
+  const available      = ADDABLE.filter(s => !activeStatuses.includes(s))
+  const isDead         = activeStatuses.includes('dead')
+
+  // â”€â”€ Shared sub-elements â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+
   const avatar = (
     <div
       className="relative flex-shrink-0 cursor-pointer"
@@ -116,16 +167,52 @@ export default function CreatureRow({ creature, isActive, onSave, onDelete }: Cr
     </button>
   )
 
-  const statusSelect = (
-    <select
-      className="text-xs bg-dnd-dark border border-dnd-border/40 rounded px-1 py-0.5 text-dnd-parchment font-body focus:outline-none focus:border-dnd-gold/50 shrink-0"
-      value={creature.status}
-      onChange={(e) => onSave({ status: e.target.value as CreatureStatus })}
-    >
-      {ALL_STATUSES.map((s) => (
-        <option key={s} value={s}>{s}</option>
+  const statusTags = (
+    <div ref={statusRef} className="relative flex items-center gap-1 flex-wrap">
+      {activeStatuses.map(s => (
+        <span
+          key={s}
+          className={cn(
+            'inline-flex items-center gap-0.5 text-[10px] border rounded px-1 py-px leading-tight capitalize',
+            STATUS_PILL[s] ?? 'bg-dnd-surface/50 text-dnd-muted border-dnd-border/40',
+          )}
+        >
+          {s}
+          <button
+            type="button"
+            onClick={() => removeStatus(s)}
+            className="ml-0.5 opacity-60 hover:opacity-100 transition-opacity"
+            title={`Remove ${s}`}
+          >
+            <X className="w-2.5 h-2.5" />
+          </button>
+        </span>
       ))}
-    </select>
+      {available.length > 0 && (
+        <button
+          type="button"
+          onClick={() => setStatusOpen(v => !v)}
+          className="inline-flex items-center justify-center w-5 h-5 rounded border border-dnd-border/40 text-dnd-muted hover:text-dnd-parchment hover:border-dnd-border transition-colors"
+          title="Add condition"
+        >
+          <Plus className="w-3 h-3" />
+        </button>
+      )}
+      {statusOpen && (
+        <div className="absolute left-0 top-full mt-1 z-50 bg-dnd-dark border border-dnd-border rounded-lg py-1 w-36 shadow-xl max-h-48 overflow-y-auto">
+          {available.map(s => (
+            <button
+              key={s}
+              type="button"
+              onClick={() => addStatus(s)}
+              className="w-full text-left px-3 py-1 text-xs text-dnd-parchment hover:bg-dnd-surface/60 transition-colors capitalize"
+            >
+              {s}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
   )
 
   const initiativeInput = (
@@ -154,6 +241,7 @@ export default function CreatureRow({ creature, isActive, onSave, onDelete }: Cr
 
   const uploadBtn = (
     <button
+      type="button"
       onClick={() => fileRef.current?.click()}
       disabled={uploading}
       className="p-1 rounded text-dnd-muted hover:text-dnd-parchment transition-colors disabled:opacity-40"
@@ -165,6 +253,7 @@ export default function CreatureRow({ creature, isActive, onSave, onDelete }: Cr
 
   const deleteBtn = (
     <button
+      type="button"
       onClick={onDelete}
       className="p-1 rounded text-dnd-muted hover:!text-dnd-red transition-colors"
       title="Delete creature"
@@ -177,31 +266,27 @@ export default function CreatureRow({ creature, isActive, onSave, onDelete }: Cr
     <div className={cn(
       'group rounded-lg border transition-colors',
       isActive ? 'bg-dnd-gold/10 border-dnd-gold/50' : 'bg-dnd-dark/60 border-dnd-border/40',
-      creature.status === 'dead' && 'opacity-50',
+      isDead && 'opacity-50',
     )}>
-      {/* Single hidden file input — shared by both layouts */}
       <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={handleUpload} />
 
-      {/* ──── MOBILE layout (below sm breakpoint) ──── */}
+      {/* â”€â”€ MOBILE layout â”€â”€ */}
       <div className="sm:hidden flex flex-col px-3 py-2 gap-1.5">
-        {/* Row 1: avatar  name  status */}
         <div className="flex items-center gap-2">
           {avatar}
           {nameCell}
-          {statusSelect}
         </div>
-        {/* Row 2: initiative  spacer  PC  upload  delete */}
-        <div className="flex items-center gap-2 pl-9">
+        <div className="flex items-center gap-2 pl-9 flex-wrap">
           {initiativeInput}
-          <div className="flex-1" />
+          <div className="flex-1 min-w-0">{statusTags}</div>
           {pcCheckbox}
           {uploadBtn}
           {deleteBtn}
         </div>
       </div>
 
-      {/* ──── DESKTOP layout (sm and above) ──── */}
-      <div className="hidden sm:flex items-center gap-2 px-3 h-11">
+      {/* â”€â”€ DESKTOP layout â”€â”€ */}
+      <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 min-h-[2.75rem]">
         {avatar}
         {nameCell}
         {initiativeInput}
@@ -216,18 +301,10 @@ export default function CreatureRow({ creature, isActive, onSave, onDelete }: Cr
           onBlur={commitAc}
           onKeyDown={(e) => { if (e.key === 'Enter') (e.target as HTMLInputElement).blur() }}
         />
+        {statusTags}
         <div className="flex-1" />
         {uploadBtn}
         {pcCheckbox}
-        <select
-          className="max-w-[100px] text-xs bg-dnd-dark border border-dnd-border/40 rounded px-1 py-0.5 text-dnd-parchment font-body focus:outline-none focus:border-dnd-gold/50"
-          value={creature.status}
-          onChange={(e) => onSave({ status: e.target.value as CreatureStatus })}
-        >
-          {ALL_STATUSES.map((s) => (
-            <option key={s} value={s}>{s}</option>
-          ))}
-        </select>
         {deleteBtn}
       </div>
     </div>

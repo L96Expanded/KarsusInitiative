@@ -16,8 +16,8 @@ export default function ImageUpload({ value, onChange, label = 'Image' }: ImageU
   const onDrop = useCallback(async (files: File[]) => {
     const file = files[0]
     if (!file) return
-    if (file.size > 5 * 1024 * 1024) {
-      toast.error('Image must be under 5 MB')
+    if (file.size > 25 * 1024 * 1024) {
+      toast.error('Image must be under 25 MB')
       return
     }
     setUploading(true)
@@ -85,7 +85,7 @@ export default function ImageUpload({ value, onChange, label = 'Image' }: ImageU
               <span className="text-sm font-ui">
                 {isDragActive ? 'Drop here…' : 'Click or drag to upload'}
               </span>
-              <span className="text-xs opacity-60">PNG, JPG, WEBP up to 5 MB</span>
+              <span className="text-xs opacity-60">PNG, JPG, WEBP up to 25 MB</span>
             </div>
           )}
         </div>

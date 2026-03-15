@@ -30,6 +30,23 @@ function sortCreatures(creatures: Creature[]): Creature[] {
   return [...creatures].sort((a, b) => b.initiative - a.initiative)
 }
 
+/** Backward compat: old docs store status (string), new docs store statuses (array). */
+function normalizeCreature(c: Record<string, unknown>): Creature {
+  const existing = c.statuses as CreatureStatus[] | undefined
+  const legacy   = c.status  as CreatureStatus   | undefined
+  return {
+    ...c,
+    statuses: existing ?? (legacy ? [legacy] : ['alive']),
+  } as Creature
+}
+
+function normalizeEncounter(enc: Record<string, unknown>): Record<string, unknown> {
+  return {
+    ...enc,
+    creatures: ((enc.creatures as Record<string, unknown>[]) ?? []).map(normalizeCreature),
+  }
+}
+
 function advanceTurn(enc: Encounter, direction: 'next' | 'prev'): Pick<Encounter, 'currentTurn' | 'currentRound'> {
   const total = enc.creatures.length
   if (total === 0) return { currentTurn: 0, currentRound: enc.currentRound }
@@ -63,7 +80,7 @@ async function listEncounters(req: HttpRequest, _ctx: InvocationContext): Promis
         parameters: [{ name: '@uid', value: userId }],
       })
       .fetchAll()
-    return json(resources)
+    return json(resources.map(normalizeEncounter))
   } catch (e: unknown) {
     return err((e instanceof Error ? e.message : 'Error'), (e as { status?: number }).status ?? 500)
   }
@@ -84,7 +101,7 @@ async function createEncounter(req: HttpRequest, _ctx: InvocationContext): Promi
       name:                c.name ?? 'Unknown',
       initiative:          c.initiative ?? 10,
       initiativeImageUrl:  c.initiativeImageUrl,
-      status:              c.status ?? 'alive',
+      statuses:            c.statuses ?? (c.status ? [c.status] : ['alive']),
       currentHp:           c.currentHp,
       maxHp:               c.maxHp,
       armorClass:          c.armorClass,
@@ -169,7 +186,7 @@ async function getEncounter(req: HttpRequest, _ctx: InvocationContext): Promise<
     const container  = await encountersContainer()
     const { resource } = await container.item(id, userId).read()
     if (!resource || resource.userId !== userId) return err('Not found', 404)
-    return json(resource)
+    return json(normalizeEncounter(resource))
   } catch (e: unknown) {
     return err((e instanceof Error ? e.message : 'Error'), (e as { status?: number }).status ?? 500)
   }
@@ -233,7 +250,7 @@ async function addCreature(req: HttpRequest, _ctx: InvocationContext): Promise<H
       name:               body.name,
       initiative:         body.initiative ?? 10,
       initiativeImageUrl: body.initiativeImageUrl,
-      status:             body.status ?? 'alive',
+      statuses:           body.statuses ?? (body.status ? [body.status] : ['alive']),
       currentHp:          body.currentHp,
       maxHp:              body.maxHp,
       armorClass:         body.armorClass,

@@ -33,10 +33,12 @@ function HpBar({ current, max }: { current: number | undefined; max: number }) {
 }
 
 function InitiativeRow({ creature, isActive, rank }: { creature: Creature; isActive: boolean; rank: number }) {
-  const status = STATUS_LABEL[creature.status] ?? { label: creature.status, color: 'text-dnd-muted bg-dnd-surface border-dnd-border' }
+  const activeStatuses = (creature.statuses ?? ['alive']).filter(s => s !== 'alive')
+  const statusLabels   = activeStatuses.map(s => STATUS_LABEL[s] ?? { label: s, color: 'text-dnd-muted bg-dnd-surface border-dnd-border' })
   const hpPct = creature.maxHp && creature.currentHp != null
     ? Math.max(0, Math.min(100, (creature.currentHp / creature.maxHp) * 100))
     : null
+  const isDead = activeStatuses.includes('dead')
 
   return (
     <motion.div
@@ -48,7 +50,7 @@ function InitiativeRow({ creature, isActive, rank }: { creature: Creature; isAct
         isActive
           ? 'bg-dnd-surface/30 border-dnd-gold/50 shadow-glow-gold'
           : 'bg-dnd-dark/60 border-dnd-border/40 opacity-75 hover:opacity-100',
-        creature.status === 'dead' && 'grayscale opacity-30',
+        isDead && 'grayscale opacity-30',
       )}
     >
       {/* Rank */}
@@ -99,9 +101,9 @@ function InitiativeRow({ creature, isActive, rank }: { creature: Creature; isAct
           )}>
             {creature.name}
           </span>
-          {creature.status !== 'alive' && (
-            <span className={cn('hidden sm:inline-flex text-[10px] border rounded px-1.5 py-0.5 flex-shrink-0', status.color)}>
-              {status.label}
+          {statusLabels.length > 0 && (
+            <span className={cn('hidden sm:inline-flex text-[10px] border rounded px-1.5 py-0.5 flex-shrink-0', statusLabels[0]?.color)}>
+              {statusLabels.map(sl => sl.label).join(', ')}
             </span>
           )}
         </div>
@@ -159,7 +161,8 @@ export default function EncounterViewPage() {
 
   const sorted = [...encounter.creatures].sort((a, b) => b.initiative - a.initiative)
   const active = sorted[encounter.currentTurn] ?? null
-  const activeStatus = active ? (STATUS_LABEL[active.status] ?? { label: active.status, color: 'text-dnd-muted bg-dnd-surface border-dnd-border' }) : null
+  const activeStatuses = active ? (active.statuses ?? ['alive']).filter(s => s !== 'alive') : []
+  const activeStatusLabels = activeStatuses.map(s => STATUS_LABEL[s] ?? { label: s, color: 'text-dnd-muted bg-dnd-surface border-dnd-border' })
 
   return (
     <div className="min-h-screen h-screen overflow-hidden flex flex-col bg-dnd-black">
@@ -223,7 +226,7 @@ export default function EncounterViewPage() {
                     alt={active.name}
                     className={cn(
                       'absolute inset-0 w-full h-full object-cover object-top',
-                      active.status === 'dead' && 'grayscale',
+                      activeStatuses.includes('dead') && 'grayscale',
                     )}
                   />
                 ) : (
@@ -238,7 +241,7 @@ export default function EncounterViewPage() {
                 {/* Left accent bar — theme color */}
                 <div
                   className="absolute left-0 top-0 bottom-0 w-1"
-                  style={{ backgroundColor: 'var(--theme-accent)', boxShadow: '0 0 24px rgba(var(--theme-accent-rgb), 0.5)' }}
+                  style={{ backgroundColor: 'var(--theme-accent)', boxShadow: '0 0 24px rgb(var(--theme-accent-rgb) / 0.5)' }}
                 />
 
                 {/* Bottom overlay: name, stats, status */}
@@ -280,10 +283,14 @@ export default function EncounterViewPage() {
                         <span className="font-body text-dnd-parchment text-base">AC {active.armorClass}</span>
                       </div>
                     )}
-                    {activeStatus && active.status !== 'alive' && (
-                      <span className={cn('text-xs border rounded px-2 py-0.5 capitalize', activeStatus.color)}>
-                        {activeStatus.label}
-                      </span>
+                    {activeStatusLabels.length > 0 && (
+                      <div className="flex flex-wrap gap-1">
+                        {activeStatusLabels.map((sl, i) => (
+                          <span key={i} className={cn('text-xs border rounded px-2 py-0.5 capitalize', sl.color)}>
+                            {sl.label}
+                          </span>
+                        ))}
+                      </div>
                     )}
                   </div>
 
@@ -315,7 +322,7 @@ export default function EncounterViewPage() {
               style={{ color: 'var(--theme-accent)' }}
             >Initiative Order</span>
             <span className="ml-auto text-xs text-dnd-muted font-ui">
-              {sorted.filter(c => c.status !== 'dead').length} active
+              {sorted.filter(c => !(c.statuses ?? ['alive']).includes('dead')).length} active
             </span>
           </div>
 

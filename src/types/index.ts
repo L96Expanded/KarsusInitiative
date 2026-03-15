@@ -24,7 +24,8 @@ export interface Creature {
   name: string
   initiative: number
   initiativeImageUrl?: string
-  status: CreatureStatus
+  /** Array of active conditions. Empty or ['alive'] = normal. */
+  statuses: CreatureStatus[]
   currentHp?: number
   maxHp?: number
   armorClass?: number
@@ -36,6 +37,8 @@ export interface CreateCreatureInput {
   name: string
   initiative: number
   initiativeImageUrl?: string
+  statuses?: CreatureStatus[]
+  /** @deprecated use statuses */
   status?: CreatureStatus
   currentHp?: number
   maxHp?: number

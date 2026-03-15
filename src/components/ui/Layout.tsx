@@ -67,8 +67,8 @@ export default function Layout({ children, title }: LayoutProps) {
             <div
               className="w-8 h-8 rounded-sm border flex items-center justify-center transition-all"
               style={{
-                backgroundColor: 'rgba(var(--theme-primary-rgb), 0.22)',
-                borderColor:     'rgba(var(--theme-accent-rgb), 0.5)',
+                backgroundColor: 'rgb(var(--theme-primary-rgb) / 0.22)',
+                borderColor:     'rgb(var(--theme-accent-rgb) / 0.5)',
               }}
             >
               <Shield className="w-4 h-4" style={{ color: 'var(--theme-accent)' }} />
@@ -85,7 +85,7 @@ export default function Layout({ children, title }: LayoutProps) {
           {title && (
             <h1
               className="hidden sm:block font-body text-xs tracking-[0.3em] uppercase"
-              style={{ color: 'rgba(var(--theme-accent-rgb), 0.6)' }}
+              style={{ color: 'rgb(var(--theme-accent-rgb) / 0.6)' }}
             >
               {title}
             </h1>
