@@ -8,7 +8,7 @@ import { v4 as uuidv4 } from 'uuid'
 import { encountersContainer, presetsContainer } from '../lib/cosmosdb'
 import { authenticate } from '../lib/auth'
 import { broadcastEncounter } from '../lib/pubsub'
-import type { Creature, Encounter } from '../types'
+import type { Creature, CreatureStatus, CreateCreatureInput, Encounter } from '../types'
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 function json(body: unknown, status = 200): HttpResponseInit {
@@ -91,7 +91,7 @@ async function createEncounter(req: HttpRequest, _ctx: InvocationContext): Promi
   try {
     const { userId } = authenticate(req)
     const body = (await req.json()) as {
-      title?: string; description?: string; backgroundImageUrl?: string; creatures?: Partial<Creature>[]
+      title?: string; description?: string; backgroundImageUrl?: string; creatures?: Partial<CreateCreatureInput>[]
     }
     if (!body.title) return err('title is required')
 
@@ -238,7 +238,7 @@ async function addCreature(req: HttpRequest, _ctx: InvocationContext): Promise<H
   try {
     const { userId } = authenticate(req)
     const id         = req.params.id
-    const body       = (await req.json()) as Partial<Creature>
+    const body       = (await req.json()) as Partial<CreateCreatureInput>
     if (!body.name) return err('name is required')
 
     const container = await encountersContainer()

@@ -7,7 +7,7 @@
 import { v4 as uuidv4 } from 'uuid'
 import { presetsContainer } from '../lib/cosmosdb'
 import { authenticate } from '../lib/auth'
-import type { Creature, Preset } from '../types'
+import type { Creature, CreateCreatureInput, Preset } from '../types'
 
 function json(body: unknown, status = 200): HttpResponseInit {
   return { status, jsonBody: body }
@@ -41,7 +41,7 @@ async function listPresets(req: HttpRequest, _ctx: InvocationContext): Promise<H
 async function createPreset(req: HttpRequest, _ctx: InvocationContext): Promise<HttpResponseInit> {
   try {
     const { userId } = authenticate(req)
-    const body = (await req.json()) as { name?: string; description?: string; backgroundImageUrl?: string; creatures?: Partial<Creature>[] }
+    const body = (await req.json()) as { name?: string; description?: string; backgroundImageUrl?: string; creatures?: Partial<CreateCreatureInput>[] }
     if (!body.name) return err('name is required')
 
     const now = new Date().toISOString()
@@ -135,7 +135,7 @@ async function addCreature(req: HttpRequest, _ctx: InvocationContext): Promise<H
   try {
     const { userId } = authenticate(req)
     const id         = req.params.id
-    const body       = (await req.json()) as Partial<Creature>
+    const body       = (await req.json()) as Partial<CreateCreatureInput>
     if (!body.name) return err('name is required')
 
     const container = await presetsContainer()
